@@ -116,7 +116,7 @@ function initLanguageBars() {
           const targetWidth = bar.getAttribute('data-width');
           // Small delay so the animation is visible
           setTimeout(() => {
-            bar.style.width = targetWidth + '%';
+            bar.style.setProperty('--bar-fill', targetWidth + '%');
           }, 200);
           observer.unobserve(bar);
         }
@@ -133,11 +133,35 @@ function initLanguageBars() {
    ---------------------------------------- */
 function initDonutChart() {
   const hobbies = [
-    { name: 'Tinkering with 3D printers', value: 25, color: '#3E0097' },
-    { name: 'D&D & creative writing',     value: 15, color: '#5A1DB8' },
+    { name: 'Tinkering with 3D printers', value: 25, color: '#3E0097',
+      link: 'models/',
+      examples: [
+        { label: '3D Models',  url: 'models/' },
+        { label: 'Printables', url: 'https://www.printables.com/@junakya_320548' },
+      ]
+    },
+    { name: 'D&D & creative writing',     value: 15, color: '#5A1DB8',
+      link: 'projects/',
+      examples: [
+        { label: 'DnDAudio', url: 'https://github.com/pjunak/DnDAudio' },
+        { label: 'dm-tools', url: 'https://github.com/pjunak/dm-tools' },
+      ]
+    },
     { name: 'Learning new things',         value: 15, color: '#7636CC' },
-    { name: 'Programming & OSS',           value: 10, color: '#8F52D9' },
-    { name: '3D design & modeling',        value: 15, color: '#A870E3' },
+    { name: 'Programming & OSS',           value: 10, color: '#8F52D9',
+      link: 'projects/',
+      examples: [
+        { label: 'Projects', url: 'projects/' },
+        { label: 'GitHub',   url: 'https://github.com/pjunak' },
+      ]
+    },
+    { name: '3D design & modeling',        value: 15, color: '#A870E3',
+      link: 'models/',
+      examples: [
+        { label: '3D Models',  url: 'models/' },
+        { label: 'Printables', url: 'https://www.printables.com/@junakya_320548' },
+      ]
+    },
     { name: 'Video games & books',         value: 15, color: '#BF92EB' },
     { name: 'Reading & writing poetry',    value: 5,  color: '#D4B5F2' },
   ];
@@ -145,6 +169,7 @@ function initDonutChart() {
   const svg = document.querySelector('#donutChart svg');
   const centerText = document.querySelector('.donut-center-text');
   const legend = document.getElementById('hobbiesLegend');
+  const examplesEl = document.getElementById('hobbiesExamples');
   const isTouch = window.matchMedia('(hover: none)').matches;
   const defaultHint = isTouch ? 'Tap a segment' : 'Hover a segment';
   centerText.innerHTML = `<span class="donut-label">${defaultHint}</span>`;
@@ -152,6 +177,38 @@ function initDonutChart() {
   const cy = 100;
   const radius = 70;
   const circumference = 2 * Math.PI * radius;
+
+  function navigate(url) {
+    if (url.startsWith('http')) {
+      window.open(url, '_blank', 'noopener noreferrer');
+    } else {
+      window.location.href = url;
+    }
+  }
+
+  function showExamples(hobby) {
+    if (!examplesEl || !hobby.examples || hobby.examples.length === 0) {
+      if (examplesEl) examplesEl.classList.remove('visible');
+      return;
+    }
+    examplesEl.innerHTML = '';
+    hobby.examples.forEach((ex) => {
+      const a = document.createElement('a');
+      a.classList.add('hobby-example-chip');
+      a.textContent = ex.label;
+      a.href = ex.url;
+      if (ex.url.startsWith('http')) {
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+      }
+      examplesEl.appendChild(a);
+    });
+    examplesEl.classList.add('visible');
+  }
+
+  function hideExamples() {
+    if (examplesEl) examplesEl.classList.remove('visible');
+  }
 
   // Calculate stroke-dasharray for each segment
   let offset = 0;
@@ -182,23 +239,27 @@ function initDonutChart() {
 
     offset += segLen;
 
-    // Show hobby name in center (shared by mouse & touch handlers)
     function highlightSegment() {
       centerText.innerHTML = `<span style="font-size:1.3rem">${hobby.value}%</span><span class="donut-label">${hobby.name}</span>`;
       segments.forEach((s, j) => {
         s.style.opacity = j === i ? '1' : '0.4';
       });
+      showExamples(hobby);
     }
 
     function clearHighlight() {
       centerText.innerHTML = `<span class="donut-label">${defaultHint}</span>`;
       segments.forEach((s) => { s.style.opacity = '1'; });
+      hideExamples();
     }
 
     circle.addEventListener('mouseenter', highlightSegment);
     circle.addEventListener('mouseleave', clearHighlight);
     circle.addEventListener('touchstart', (e) => { e.preventDefault(); highlightSegment(); }, { passive: false });
     circle.addEventListener('touchend', clearHighlight);
+    if (hobby.link) {
+      circle.addEventListener('click', () => navigate(hobby.link));
+    }
 
     // Legend item
     const legendItem = document.createElement('div');
@@ -208,6 +269,9 @@ function initDonutChart() {
     legendItem.addEventListener('mouseleave', clearHighlight);
     legendItem.addEventListener('touchstart', (e) => { e.preventDefault(); highlightSegment(); }, { passive: false });
     legendItem.addEventListener('touchend', clearHighlight);
+    if (hobby.link) {
+      legendItem.addEventListener('click', () => navigate(hobby.link));
+    }
     legend.appendChild(legendItem);
   });
 

@@ -31,7 +31,7 @@
   --font-body:     'Inter', sans-serif;
 
   /* Spacing */
-  --section-gap:   6rem;
+  --section-gap:   4.5rem;
   --card-radius:   16px;
   --pill-radius:   100px;
   --container-max: 1100px;
@@ -461,13 +461,31 @@ body::after {
 }
 
 /* ========================================
+   SKILLS + LANGUAGES SIDE-BY-SIDE ROW
+   ======================================== */
+.skills-languages-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1.5rem;
+  align-items: stretch;
+}
+
+.skills-languages-row > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.skills-languages-row > div .glass-card {
+  flex: 1;
+}
+
+/* ========================================
    LANGUAGES SECTION
    ======================================== */
 .languages-list {
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
-  max-width: 500px;
 }
 
 .language-item {
@@ -495,7 +513,7 @@ body::after {
   height: 100%;
   background: linear-gradient(90deg, var(--purple), var(--purple-soft));
   border-radius: 10px;
-  width: 0;
+  width: var(--bar-fill, 0%);
   transition: width 1.2s var(--ease-out);
 }
 
@@ -504,6 +522,57 @@ body::after {
   color: var(--body-light);
   min-width: 32px;
   text-align: right;
+}
+
+/* --- Vertical bars (desktop side-by-side layout) --- */
+@media (min-width: 769px) {
+  .skills-languages-row #languages .glass-card {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .skills-languages-row .languages-list {
+    flex: 1;
+    flex-direction: row;
+    gap: 2rem;
+    justify-content: center;
+    align-items: stretch;
+  }
+
+  .skills-languages-row .language-item {
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .skills-languages-row .language-name {
+    min-width: unset;
+    text-align: center;
+    font-size: 0.88rem;
+  }
+
+  .skills-languages-row .language-bar-container {
+    position: relative;
+    flex: 1;
+    width: 12px;
+  }
+
+  .skills-languages-row .language-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: var(--bar-fill, 0%);
+    background: linear-gradient(0deg, var(--purple), var(--purple-soft));
+    transition: height 1.2s var(--ease-out);
+  }
+
+  .skills-languages-row .language-level {
+    min-width: unset;
+    text-align: center;
+  }
 }
 
 /* ========================================
@@ -545,6 +614,7 @@ body::after {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  width: 112px;
   text-align: center;
   font-family: var(--font-heading);
   font-size: 1rem;
@@ -552,6 +622,7 @@ body::after {
   color: var(--text-primary);
   pointer-events: none;
   transition: opacity 0.2s;
+  word-break: break-word;
 }
 
 .donut-center-text .donut-label {
@@ -586,6 +657,54 @@ body::after {
   height: 12px;
   border-radius: 50%;
   flex-shrink: 0;
+}
+
+.hobbies-examples {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+  min-height: 2rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s;
+}
+
+.hobbies-examples.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.hobby-example-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.85rem;
+  background: var(--purple-pale);
+  color: var(--purple);
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  font-family: var(--font-body);
+  text-decoration: none;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.hobby-example-chip:hover {
+  background: var(--purple);
+  color: #fff;
+}
+
+[data-theme="dark"] .hobby-example-chip {
+  background: rgba(143, 82, 217, 0.2);
+  color: var(--purple-soft);
+}
+
+[data-theme="dark"] .hobby-example-chip:hover {
+  background: var(--purple-light);
+  color: #fff;
 }
 
 /* ========================================
@@ -741,6 +860,11 @@ body::after {
   :root {
     --section-gap: 4rem;
     --container-pad: 1.25rem;
+  }
+
+  .skills-languages-row {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
   }
 
   .hero {
@@ -1131,7 +1255,7 @@ body::after {
 .experience-timeline::before {
   content: '';
   position: absolute;
-  left: 52px; /* center of the 88px year column */
+  left: 96px; /* right edge of the 88px year column + gap start */
   top: 28px;
   bottom: 28px;
   width: 2px;
@@ -1238,9 +1362,8 @@ body::after {
   color: var(--purple);
 }
 
-/* Red Hat brand color */
 .exp-company--redhat {
-  color: #EE0000;
+  color: inherit;
 }
 
 @media (max-width: 768px) {

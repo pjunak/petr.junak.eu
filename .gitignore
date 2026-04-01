@@ -1,0 +1,32 @@
+# OS / editor junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor / IDE settings
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Secrets & credentials — never commit these
+.env
+.env.*
+*.key
+*.pem
+*.p12
+*.pfx
+secrets.*
+credentials.*
+
+# Local server / build artefacts
+node_modules/
+dist/
+__pycache__/
+*.pyc
+
+# Logs
+*.log
+
+# Misc
+server-requirements.txt

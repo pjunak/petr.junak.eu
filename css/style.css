@@ -1392,3 +1392,63 @@ body::after {
     display: none !important;
   }
 }
+
+/* ========================================
+   EXPLORE MORE CARDS
+   ======================================== */
+.explore-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.explore-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.explore-card-icon {
+  font-size: 1.8rem;
+  color: var(--purple);
+  margin-bottom: 0.25rem;
+}
+
+.explore-card-title {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.explore-card-desc {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.explore-card-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--purple);
+  margin-top: auto;
+  padding-top: 0.5rem;
+  transition: gap var(--transition-fast);
+}
+
+.explore-card:hover .explore-card-cta {
+  gap: 0.6rem;
+}
+
+@media (max-width: 768px) {
+  .explore-cards {
+    grid-template-columns: 1fr;
+  }
+}

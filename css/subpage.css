@@ -1,0 +1,405 @@
+/* ========================================
+   Subpage Shared Styles
+   Models & Projects pages
+   ======================================== */
+
+/* --- Subpage Navigation --- */
+.subpage-nav {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 2rem;
+  background: var(--card-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--card-border);
+  box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+  transition: background var(--transition-med);
+}
+
+.subpage-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--purple);
+  transition: color var(--transition-fast), gap var(--transition-fast);
+  white-space: nowrap;
+}
+
+.subpage-back:hover {
+  gap: 0.6rem;
+}
+
+.subpage-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.subpage-sibling-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  text-decoration: none;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: color var(--transition-fast);
+  white-space: nowrap;
+}
+
+.subpage-sibling-link:hover {
+  color: var(--purple);
+}
+
+@media (max-width: 768px) {
+  .subpage-nav {
+    padding: 0.6rem 1.25rem;
+  }
+}
+
+/* --- Subpage Hero --- */
+.subpage-hero {
+  padding: 4rem 0 2rem;
+}
+
+.subpage-title {
+  font-family: var(--font-heading);
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.2;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.subpage-title i {
+  color: var(--purple);
+  font-size: 0.8em;
+}
+
+.subpage-subtitle {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  max-width: 680px;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .subpage-hero {
+    padding: 3rem 0 1.5rem;
+  }
+
+  .subpage-title {
+    font-size: 1.8rem;
+  }
+}
+
+/* --- Filter Bar --- */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.filter-chip {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 0.35rem 1rem;
+  border-radius: var(--pill-radius);
+  border: 1.5px solid var(--purple-soft);
+  background: transparent;
+  color: var(--purple);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast),
+              transform var(--transition-fast), border-color var(--transition-fast);
+}
+
+.filter-chip:hover {
+  background: var(--purple-pale);
+  transform: translateY(-1px);
+}
+
+.filter-chip.active {
+  background: var(--purple);
+  color: #fff;
+  border-color: var(--purple);
+}
+
+[data-theme="dark"] .filter-chip.active {
+  background: var(--purple-soft);
+  border-color: var(--purple-soft);
+}
+
+/* --- Card Grid --- */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+@media (max-width: 480px) {
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* --- Showcase Card --- */
+.showcase-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast),
+              opacity 0.4s var(--ease-out);
+}
+
+.showcase-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(62, 0, 151, 0.12), 0 4px 12px rgba(0,0,0,0.06);
+}
+
+[data-theme="dark"] .showcase-card:hover {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0,0,0,0.3);
+}
+
+/* Hidden by filter */
+.showcase-card.hidden {
+  display: none;
+}
+
+/* --- Card Image --- */
+.showcase-card-img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: var(--bg-alt);
+}
+
+.showcase-card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s var(--ease-out);
+}
+
+.showcase-card:hover .showcase-card-img img {
+  transform: scale(1.05);
+}
+
+/* --- Card Body --- */
+.showcase-card-body {
+  flex: 1;
+  padding: 1.25rem 1.5rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.showcase-tag-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.showcase-tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--pill-radius);
+}
+
+.showcase-tag--ratrig {
+  background: var(--purple-pale);
+  color: var(--purple);
+}
+
+.showcase-tag--prusa {
+  background: rgba(238, 120, 0, 0.12);
+  color: #c96800;
+}
+
+[data-theme="dark"] .showcase-tag--prusa {
+  background: rgba(238, 120, 0, 0.15);
+  color: #f5a623;
+}
+
+.showcase-tag--dnd {
+  background: rgba(220, 50, 50, 0.1);
+  color: #b83232;
+}
+
+[data-theme="dark"] .showcase-tag--dnd {
+  background: rgba(220, 50, 50, 0.15);
+  color: #e06060;
+}
+
+.showcase-tag--personal {
+  background: var(--purple-pale);
+  color: var(--purple);
+}
+
+.showcase-tag--uni {
+  background: rgba(34, 139, 230, 0.1);
+  color: #1a6fb5;
+}
+
+[data-theme="dark"] .showcase-tag--uni {
+  background: rgba(34, 139, 230, 0.15);
+  color: #5bb0f0;
+}
+
+.showcase-tag--oss {
+  background: rgba(34, 197, 94, 0.1);
+  color: #188a42;
+}
+
+[data-theme="dark"] .showcase-tag--oss {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+}
+
+.showcase-lang {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.showcase-lang i {
+  font-size: 0.5rem;
+}
+
+.showcase-card-title {
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+.showcase-card-desc {
+  font-size: 0.87rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+
+.showcase-card-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  font-size: 0.78rem;
+  color: var(--body-light);
+  margin-top: auto;
+  padding-top: 0.5rem;
+}
+
+.showcase-card-stats i {
+  margin-right: 0.2rem;
+}
+
+/* --- Card CTA footer --- */
+.showcase-card-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--purple);
+  border-top: 1px solid var(--card-border);
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.showcase-card:hover .showcase-card-cta {
+  background: var(--purple);
+  color: #fff;
+}
+
+[data-theme="dark"] .showcase-card:hover .showcase-card-cta {
+  background: var(--purple-soft);
+}
+
+/* --- No-image card variant --- */
+.showcase-card--no-img .showcase-card-body {
+  padding-top: 1.5rem;
+  padding-bottom: 1rem;
+}
+
+/* --- Profile link (bottom of grid) --- */
+.showcase-profile-link {
+  text-align: center;
+  margin-top: 2.5rem;
+}
+
+.profile-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--purple);
+  color: #fff;
+  padding: 0.65rem 1.6rem;
+  border-radius: var(--pill-radius);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.profile-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--purple-glow);
+}
+
+[data-theme="dark"] .profile-cta {
+  background: var(--purple-soft);
+}
+
+/* --- Print overrides for subpages --- */
+@media print {
+  .subpage-nav {
+    display: none !important;
+  }
+
+  .showcase-card {
+    box-shadow: none !important;
+    border: 1px solid #ddd !important;
+    background: #fff !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    break-inside: avoid;
+  }
+
+  .showcase-card-cta {
+    display: none !important;
+  }
+
+  .filter-bar {
+    display: none !important;
+  }
+}

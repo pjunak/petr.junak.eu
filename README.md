@@ -1,6 +1,6 @@
 # petr.junak.eu
 
-Personal CV webpage for Petr Junák — programmer, DIY enthusiast & tinkerer.
+Personal CV webpage
 
 ## Structure
 
@@ -8,16 +8,6 @@ Personal CV webpage for Petr Junák — programmer, DIY enthusiast & tinkerer.
 - `css/style.css` — Design system & styles
 - `js/main.js` — Scroll animations, theme toggle, interactive charts
 - `assets/` — Profile photo, favicon
-
-## Development
-
-Open `index.html` directly in a browser, or start a local server:
-
-```bash
-python3 -m http.server 8000
-```
-
-Then visit `http://localhost:8000`.
 
 ## Licensing
 

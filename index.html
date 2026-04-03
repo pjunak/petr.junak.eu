@@ -20,10 +20,20 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
 
-  <!-- Favicon -->
+  <!-- Canonical -->
+  <link rel="canonical" href="https://petr.junak.eu/">
+
+  <!-- Favicon & Manifest -->
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.json">
+
+  <!-- View Transitions (smooth cross-page navigation) -->
+  <meta name="view-transition" content="same-origin">
 </head>
 <body>
+
+  <!-- Skip to main content (accessibility) -->
+  <a href="#about" class="skip-link">Skip to main content</a>
 
   <!-- ======== STICKY NAV ======== -->
   <nav class="sticky-nav" id="stickyNav" aria-label="Quick navigation">
@@ -375,6 +385,6 @@
     </div>
   </footer>
 
-  <script src="js/main.js"></script>
+  <script src="js/main.js" defer></script>
 </body>
 </html>

@@ -3,15 +3,14 @@
    Main JavaScript
    ======================================== */
 
-document.addEventListener('DOMContentLoaded', () => {
-  initThemeToggle();
-  initStickyNav();
-  initScrollReveal();
-  initLanguageBars();
-  initDonutChart();
-  initExpandableCards();
-  initActiveNavHighlight();
-});
+/* Scripts loaded with defer — DOM is ready when this runs */
+initThemeToggle();
+initStickyNav();
+initScrollReveal();
+initLanguageBars();
+initDonutChart();
+initExpandableCards();
+initActiveNavHighlight();
 
 /* ----------------------------------------
    Sticky Navigation
@@ -130,6 +129,8 @@ function initLanguageBars() {
 
 /* ----------------------------------------
    Interactive Donut Chart
+   Uses event delegation to avoid per-segment listener leaks.
+   Segments and legend items are keyboard-accessible.
    ---------------------------------------- */
 function initDonutChart() {
   const hobbies = [
@@ -172,7 +173,15 @@ function initDonutChart() {
   const examplesEl = document.getElementById('hobbiesExamples');
   const isTouch = window.matchMedia('(hover: none)').matches;
   const defaultHint = isTouch ? 'Tap a segment' : 'Hover a segment';
+
+  // Give the center text an aria-live region so screen readers announce changes
+  centerText.setAttribute('aria-live', 'polite');
   centerText.innerHTML = `<span class="donut-label">${defaultHint}</span>`;
+
+  // Give the SVG chart a role and label for accessibility
+  svg.setAttribute('role', 'img');
+  svg.setAttribute('aria-label', 'Interactive donut chart showing hobby time distribution');
+
   const cx = 100;
   const cy = 100;
   const radius = 70;
@@ -210,13 +219,36 @@ function initDonutChart() {
     if (examplesEl) examplesEl.classList.remove('visible');
   }
 
-  // Calculate stroke-dasharray for each segment
+  /** Highlight a specific hobby index in both chart and legend */
+  function highlightSegment(index) {
+    const hobby = hobbies[index];
+    centerText.innerHTML = `<span style="font-size:1.3rem">${hobby.value}%</span><span class="donut-label">${hobby.name}</span>`;
+    segments.forEach((s, j) => {
+      s.style.opacity = j === index ? '1' : '0.4';
+    });
+    legend.querySelectorAll('.legend-item').forEach((item, j) => {
+      item.style.opacity = j === index ? '1' : '0.6';
+    });
+    showExamples(hobby);
+  }
+
+  /** Clear all highlights back to default */
+  function clearHighlight() {
+    centerText.innerHTML = `<span class="donut-label">${defaultHint}</span>`;
+    segments.forEach((s) => { s.style.opacity = '1'; });
+    legend.querySelectorAll('.legend-item').forEach((item) => {
+      item.style.opacity = '1';
+    });
+    hideExamples();
+  }
+
+  // Build SVG segments
   let offset = 0;
   const segments = [];
 
   hobbies.forEach((hobby, i) => {
     const segLen = (hobby.value / 100) * circumference;
-    const gap = 3; // Small gap between segments
+    const gap = 3;
     const dashLen = Math.max(segLen - gap, 0);
 
     const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
@@ -229,6 +261,11 @@ function initDonutChart() {
     circle.setAttribute('stroke-dashoffset', -offset);
     circle.setAttribute('data-index', i);
 
+    // Accessibility: make each segment focusable and labelled
+    circle.setAttribute('tabindex', '0');
+    circle.setAttribute('role', 'button');
+    circle.setAttribute('aria-label', `${hobby.name}: ${hobby.value}%`);
+
     // Animate in: start collapsed, grow on intersection
     circle.style.strokeDasharray = `0 ${circumference}`;
     circle.dataset.targetDash = `${dashLen} ${circumference - dashLen}`;
@@ -236,43 +273,117 @@ function initDonutChart() {
 
     svg.appendChild(circle);
     segments.push(circle);
-
     offset += segLen;
 
-    function highlightSegment() {
-      centerText.innerHTML = `<span style="font-size:1.3rem">${hobby.value}%</span><span class="donut-label">${hobby.name}</span>`;
-      segments.forEach((s, j) => {
-        s.style.opacity = j === i ? '1' : '0.4';
-      });
-      showExamples(hobby);
-    }
-
-    function clearHighlight() {
-      centerText.innerHTML = `<span class="donut-label">${defaultHint}</span>`;
-      segments.forEach((s) => { s.style.opacity = '1'; });
-      hideExamples();
-    }
-
-    circle.addEventListener('mouseenter', highlightSegment);
-    circle.addEventListener('mouseleave', clearHighlight);
-    circle.addEventListener('touchstart', (e) => { e.preventDefault(); highlightSegment(); }, { passive: false });
-    circle.addEventListener('touchend', clearHighlight);
-    if (hobby.link) {
-      circle.addEventListener('click', () => navigate(hobby.link));
-    }
-
-    // Legend item
+    // Legend item — keyboard accessible
     const legendItem = document.createElement('div');
     legendItem.classList.add('legend-item');
+    legendItem.setAttribute('tabindex', '0');
+    legendItem.setAttribute('role', 'button');
+    legendItem.setAttribute('aria-label', `${hobby.name}: ${hobby.value}%`);
+    legendItem.setAttribute('data-index', i);
     legendItem.innerHTML = `<span class="legend-dot" style="background:${hobby.color}"></span>${hobby.name}`;
-    legendItem.addEventListener('mouseenter', highlightSegment);
-    legendItem.addEventListener('mouseleave', clearHighlight);
-    legendItem.addEventListener('touchstart', (e) => { e.preventDefault(); highlightSegment(); }, { passive: false });
-    legendItem.addEventListener('touchend', clearHighlight);
-    if (hobby.link) {
-      legendItem.addEventListener('click', () => navigate(hobby.link));
-    }
     legend.appendChild(legendItem);
+  });
+
+  // --- Event delegation on SVG (avoids per-segment listener leaks) ---
+  function getSegmentIndex(target) {
+    const seg = target.closest('.donut-segment');
+    return seg ? parseInt(seg.getAttribute('data-index'), 10) : -1;
+  }
+
+  svg.addEventListener('mouseenter', (e) => {
+    const i = getSegmentIndex(e.target);
+    if (i >= 0) highlightSegment(i);
+  }, true); // use capture for SVG bubbling
+
+  svg.addEventListener('mouseleave', (e) => {
+    const i = getSegmentIndex(e.target);
+    if (i >= 0) clearHighlight();
+  }, true);
+
+  svg.addEventListener('focusin', (e) => {
+    const i = getSegmentIndex(e.target);
+    if (i >= 0) highlightSegment(i);
+  });
+
+  svg.addEventListener('focusout', (e) => {
+    const i = getSegmentIndex(e.target);
+    if (i >= 0) clearHighlight();
+  });
+
+  svg.addEventListener('touchstart', (e) => {
+    const i = getSegmentIndex(e.target);
+    if (i >= 0) { e.preventDefault(); highlightSegment(i); }
+  }, { passive: false });
+
+  svg.addEventListener('touchend', (e) => {
+    const i = getSegmentIndex(e.target);
+    if (i >= 0) clearHighlight();
+  });
+
+  svg.addEventListener('click', (e) => {
+    const i = getSegmentIndex(e.target);
+    if (i >= 0 && hobbies[i].link) navigate(hobbies[i].link);
+  });
+
+  svg.addEventListener('keydown', (e) => {
+    const i = getSegmentIndex(e.target);
+    if (i < 0) return;
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      if (hobbies[i].link) navigate(hobbies[i].link);
+    }
+  });
+
+  // --- Event delegation on legend ---
+  function getLegendIndex(target) {
+    const item = target.closest('.legend-item');
+    return item ? parseInt(item.getAttribute('data-index'), 10) : -1;
+  }
+
+  legend.addEventListener('mouseenter', (e) => {
+    const i = getLegendIndex(e.target);
+    if (i >= 0) highlightSegment(i);
+  }, true);
+
+  legend.addEventListener('mouseleave', (e) => {
+    const i = getLegendIndex(e.target);
+    if (i >= 0) clearHighlight();
+  }, true);
+
+  legend.addEventListener('focusin', (e) => {
+    const i = getLegendIndex(e.target);
+    if (i >= 0) highlightSegment(i);
+  });
+
+  legend.addEventListener('focusout', (e) => {
+    const i = getLegendIndex(e.target);
+    if (i >= 0) clearHighlight();
+  });
+
+  legend.addEventListener('touchstart', (e) => {
+    const i = getLegendIndex(e.target);
+    if (i >= 0) { e.preventDefault(); highlightSegment(i); }
+  }, { passive: false });
+
+  legend.addEventListener('touchend', (e) => {
+    const i = getLegendIndex(e.target);
+    if (i >= 0) clearHighlight();
+  });
+
+  legend.addEventListener('click', (e) => {
+    const i = getLegendIndex(e.target);
+    if (i >= 0 && hobbies[i].link) navigate(hobbies[i].link);
+  });
+
+  legend.addEventListener('keydown', (e) => {
+    const i = getLegendIndex(e.target);
+    if (i < 0) return;
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      if (hobbies[i].link) navigate(hobbies[i].link);
+    }
   });
 
   // Animate chart segments on scroll

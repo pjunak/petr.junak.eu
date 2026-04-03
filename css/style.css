@@ -15,7 +15,7 @@
   --purple-glow:  rgba(62, 0, 151, 0.15);
   --slate:        #2E2E2E;
   --body-gray:    #666666;
-  --body-light:   #888888;
+  --body-light:   #6B6B6B;
   --bg:           #F8F7FC;
   --bg-alt:       #EFECF5;
   --card-bg:      rgba(255, 255, 255, 0.72);
@@ -43,6 +43,15 @@
   --transition-med:  0.4s var(--ease-out);
   --transition-slow: 0.7s var(--ease-out);
 
+  /* Shadows (consolidated tokens) */
+  --shadow-card-hover:       0 12px 40px rgba(62, 0, 151, 0.12), 0 4px 12px rgba(0,0,0,0.06);
+  --shadow-card-hover-dark:  0 12px 40px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0,0,0,0.3);
+  --shadow-cta:              0 6px 20px var(--purple-glow);
+  --shadow-nav:              0 2px 16px rgba(0,0,0,0.06);
+
+  /* Focus ring */
+  --focus-ring: 0 0 0 3px var(--purple-soft);
+
   /* Status colors */
   --green:       #22C55E;
   --green-pale:  rgba(34, 197, 94, 0.12);
@@ -57,7 +66,7 @@
   --purple-glow:  rgba(155, 125, 200, 0.12);
   --slate:        #C8C8D0;
   --body-gray:    #A0A0B0;
-  --body-light:   #808090;
+  --body-light:   #9494A8;
   --bg:           #0E0E18;
   --bg-alt:       #161625;
   --card-bg:      rgba(22, 22, 37, 0.8);
@@ -67,6 +76,59 @@
   --text-secondary: #A0A0B0;
   --divider:      #2A2A3A;
   --white:        #1A1A2E;
+}
+
+/* --- Skip Link (accessibility) --- */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 1rem;
+  z-index: 10000;
+  padding: 0.5rem 1.2rem;
+  background: var(--purple);
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: 0 0 var(--card-radius) var(--card-radius);
+  text-decoration: none;
+  transition: top var(--transition-fast);
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* --- Global Focus Styles (accessibility) --- */
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* Round elements need a round focus ring */
+.hero-contact-link:focus-visible,
+.footer-link:focus-visible,
+.theme-toggle:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: 50%;
+}
+
+/* Cards get a subtle ring + slight lift */
+.showcase-card:focus-visible,
+.explore-card:focus-visible,
+.experience-card:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring), var(--card-shadow);
+}
+
+/* Pill-shaped elements */
+.filter-chip:focus-visible,
+.profile-cta:focus-visible,
+.sticky-nav-cta:focus-visible,
+.hero-contact-link--labeled:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: var(--pill-radius);
 }
 
 /* --- Reset & Base --- */
@@ -137,7 +199,7 @@ body::after {
 
 .section-title {
   font-family: var(--font-heading);
-  font-size: 1.75rem;
+  font-size: clamp(1.5rem, 3vw, 1.75rem);
   font-weight: 700;
   color: var(--text-primary);
   margin-bottom: 2rem;
@@ -170,11 +232,11 @@ body::after {
 
 .glass-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 40px rgba(62, 0, 151, 0.12), 0 4px 12px rgba(0,0,0,0.06);
+  box-shadow: var(--shadow-card-hover);
 }
 
 [data-theme="dark"] .glass-card:hover {
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0,0,0,0.3);
+  box-shadow: var(--shadow-card-hover-dark);
 }
 
 /* ========================================
@@ -227,7 +289,7 @@ body::after {
 
 .hero-name {
   font-family: var(--font-heading);
-  font-size: 3.2rem;
+  font-size: clamp(2rem, 5vw, 3.2rem);
   font-weight: 800;
   color: var(--text-primary);
   line-height: 1.15;
@@ -698,8 +760,8 @@ body::after {
 }
 
 [data-theme="dark"] .hobby-example-chip {
-  background: rgba(143, 82, 217, 0.2);
-  color: var(--purple-soft);
+  background: var(--purple-pale);
+  color: var(--purple);
 }
 
 [data-theme="dark"] .hobby-example-chip:hover {
@@ -780,7 +842,7 @@ body::after {
 
 .footer-download:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px var(--purple-glow);
+  box-shadow: var(--shadow-cta);
 }
 
 .footer-copy {
@@ -886,10 +948,6 @@ body::after {
     height: 140px;
   }
 
-  .hero-name {
-    font-size: 2.4rem;
-  }
-
   .hero-education {
     margin-left: auto;
     margin-right: auto;
@@ -897,10 +955,6 @@ body::after {
 
   .experience-grid {
     grid-template-columns: 1fr;
-  }
-
-  .section-title {
-    font-size: 1.5rem;
   }
 
   .hobbies-wrapper {
@@ -916,10 +970,6 @@ body::after {
 }
 
 @media (max-width: 480px) {
-  .hero-name {
-    font-size: 2rem;
-  }
-
   .hero-tagline {
     font-size: 1rem;
   }
@@ -1008,7 +1058,7 @@ body::after {
 
 .sticky-nav-cta:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px var(--purple-glow);
+  box-shadow: var(--shadow-cta);
 }
 
 /* Offset anchor scroll so sticky nav doesn't cover headings */
@@ -1389,6 +1439,32 @@ body::after {
 }
 
 /* ========================================
+   TABLET BREAKPOINT
+   ======================================== */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .explore-cards {
+    gap: 1rem;
+  }
+
+  .sticky-nav-links {
+    gap: 1rem;
+  }
+
+  .sticky-nav-links a {
+    font-size: 0.8rem;
+  }
+
+  .hobbies-wrapper {
+    gap: 2rem;
+  }
+
+  .donut-chart-container {
+    width: 260px;
+    height: 260px;
+  }
+}
+
+/* ========================================
    REDUCED MOTION
    ======================================== */
 @media (prefers-reduced-motion: reduce) {
@@ -1417,6 +1493,15 @@ body::after {
   .hero-photo-wrapper {
     opacity: 1 !important;
     transform: none !important;
+    animation: none !important;
+  }
+
+  /* Disable donut hover effect and availability pulse */
+  .donut-segment:hover {
+    filter: none !important;
+  }
+
+  .availability-dot {
     animation: none !important;
   }
 }
@@ -1574,4 +1659,21 @@ body::after {
   .explore-cards {
     grid-template-columns: 1fr;
   }
+}
+
+/* ========================================
+   VIEW TRANSITIONS (same-origin navigation)
+   Provides a smooth cross-fade when navigating
+   between pages. Requires the <meta name="view-transition">
+   tag in each HTML file. Falls back gracefully in
+   browsers that don't support it.
+   ======================================== */
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.25s;
+  animation-timing-function: var(--ease-out);
 }

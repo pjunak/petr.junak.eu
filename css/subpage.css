@@ -72,7 +72,7 @@
 
 .subpage-title {
   font-family: var(--font-heading);
-  font-size: 2.5rem;
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
   font-weight: 800;
   color: var(--text-primary);
   line-height: 1.2;
@@ -100,9 +100,6 @@
     padding: 3rem 0 1.5rem;
   }
 
-  .subpage-title {
-    font-size: 1.8rem;
-  }
 }
 
 /* --- Filter Bar --- */
@@ -133,7 +130,7 @@
 
 .filter-chip.active {
   background: var(--purple);
-  color: #fff;
+  color: var(--white);
   border-color: var(--purple);
 }
 
@@ -174,11 +171,11 @@
 
 .showcase-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(62, 0, 151, 0.12), 0 4px 12px rgba(0,0,0,0.06);
+  box-shadow: var(--shadow-card-hover);
 }
 
 [data-theme="dark"] .showcase-card:hover {
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(0,0,0,0.3);
+  box-shadow: var(--shadow-card-hover-dark);
 }
 
 /* Hidden by filter */
@@ -338,7 +335,7 @@
 
 .showcase-card:hover .showcase-card-cta {
   background: var(--purple);
-  color: #fff;
+  color: var(--white);
 }
 
 [data-theme="dark"] .showcase-card:hover .showcase-card-cta {
@@ -362,7 +359,7 @@
   align-items: center;
   gap: 0.5rem;
   background: var(--purple);
-  color: #fff;
+  color: var(--white);
   padding: 0.65rem 1.6rem;
   border-radius: var(--pill-radius);
   text-decoration: none;
@@ -373,11 +370,39 @@
 
 .profile-cta:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px var(--purple-glow);
+  box-shadow: var(--shadow-cta);
 }
 
 [data-theme="dark"] .profile-cta {
   background: var(--purple-soft);
+}
+
+/* --- Skeleton Loading Cards --- */
+.showcase-card--skeleton {
+  pointer-events: none;
+}
+
+.skeleton-line {
+  height: 0.85rem;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--bg-alt) 25%, var(--card-border) 50%, var(--bg-alt) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+  margin-bottom: 0.6rem;
+}
+
+.skeleton-line--short { width: 40%; }
+.skeleton-line--title { width: 65%; height: 1rem; }
+
+@keyframes skeleton-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-line {
+    animation: none;
+  }
 }
 
 /* --- Print overrides for subpages --- */

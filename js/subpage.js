@@ -3,9 +3,8 @@
    Filter chips & theme sync
    ======================================== */
 
-document.addEventListener('DOMContentLoaded', () => {
-  initFilterChips();
-});
+/* Script loaded with defer — DOM is ready when this runs */
+initFilterChips();
 
 /* ----------------------------------------
    Filter Chips

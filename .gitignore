@@ -6,6 +6,7 @@ desktop.ini
 # Editor / IDE settings
 .vscode/
 .idea/
+.claude/
 *.sublime-project
 *.sublime-workspace
 
@@ -30,3 +31,7 @@ __pycache__/
 
 # Misc
 server-requirements.txt
+
+# Claude Code — worktrees are temporary session directories, never commit them.
+# launch.json is intentionally kept (project-level dev server config).
+.claude/worktrees/

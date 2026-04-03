@@ -1,0 +1,16 @@
+{
+  "name": "Petr Junák — CV",
+  "short_name": "Petr Junák",
+  "description": "Personal CV of Petr Junák — software and IT engineer based in Brno, CZ.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F8F7FC",
+  "theme_color": "#3E0097",
+  "icons": [
+    {
+      "src": "assets/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

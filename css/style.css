@@ -78,25 +78,6 @@
   --white:        #1A1A2E;
 }
 
-/* --- Skip Link (accessibility) --- */
-.skip-link {
-  position: absolute;
-  top: -100%;
-  left: 1rem;
-  z-index: 10000;
-  padding: 0.5rem 1.2rem;
-  background: var(--purple);
-  color: #fff;
-  font-size: 0.875rem;
-  font-weight: 600;
-  border-radius: 0 0 var(--card-radius) var(--card-radius);
-  text-decoration: none;
-  transition: top var(--transition-fast);
-}
-
-.skip-link:focus {
-  top: 0;
-}
 
 /* --- Global Focus Styles (accessibility) --- */
 :focus-visible {

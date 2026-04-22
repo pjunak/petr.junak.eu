@@ -4,14 +4,37 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <title>Petr Junák — Software &amp; IT Engineer</title>
-  <meta name="description" content="Personal CV of Petr Junák — software and IT engineer based in Brno, CZ. Python, JavaScript, networking, CI/CD, and 3D design.">
-  <meta property="og:title" content="Petr Junák — CV">
-  <meta property="og:description" content="Software &amp; IT Engineer. Programmer, DIY enthusiast &amp; tinkerer. View my interactive CV.">
+  <title data-i18n="meta.title">Petr Junák — Software &amp; IT Engineer</title>
+  <meta name="description" data-i18n-attr="content:meta.description" content="Personal CV of Petr Junák — software and IT engineer based in Brno, CZ. Python, JavaScript, networking, CI/CD, and 3D design.">
+  <meta property="og:title" data-i18n-attr="content:meta.og_title" content="Petr Junák — CV">
+  <meta property="og:description" data-i18n-attr="content:meta.og_description" content="Software &amp; IT Engineer. Programmer, DIY enthusiast &amp; tinkerer. View my interactive CV.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://petr.junak.eu">
+  <meta property="og:image" content="https://petr.junak.eu/assets/face.png">
   <meta name="theme-color" content="#F8F7FC" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#0E0E18" media="(prefers-color-scheme: dark)">
+
+  <!-- Early language + theme detection (prevents FOUC for Czech visitors) -->
+  <script>
+    (function () {
+      try {
+        var supported = ['en', 'cs'];
+        var saved = localStorage.getItem('lang');
+        var lang;
+        if (saved && supported.indexOf(saved) !== -1) {
+          lang = saved;
+        } else {
+          var browser = (navigator.language || 'en').toLowerCase().split('-')[0];
+          lang = (browser === 'cs' || browser === 'sk') ? 'cs' : 'en';
+        }
+        document.documentElement.lang = lang;
+
+        var theme = localStorage.getItem('theme');
+        if (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches) theme = 'dark';
+        if (theme) document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) { /* localStorage unavailable — fall back to HTML defaults */ }
+    })();
+  </script>
 
   <!-- Fonts & Icons -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,6 +42,9 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;600;700;800&display=swap">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+
+  <!-- Preload LCP image -->
+  <link rel="preload" as="image" href="assets/face.png" fetchpriority="high">
 
   <!-- Canonical -->
   <link rel="canonical" href="https://petr.junak.eu/">
@@ -32,27 +58,34 @@
 </head>
 <body>
 
+<a href="#main" class="skip-link">Skip to content</a>
+
+<!-- ======== PAGE CONTROLS (always visible) ======== -->
+  <div class="page-controls" role="group" aria-label="Page controls">
+    <button class="lang-toggle" id="langToggle" type="button" aria-label="Switch language">EN</button>
+    <button class="theme-toggle" id="themeToggle" data-i18n-attr="aria-label:nav.theme_toggle" aria-label="Toggle dark mode">
+      <i class="fa-solid fa-moon"></i>
+      <i class="fa-solid fa-sun"></i>
+    </button>
+  </div>
+
 <!-- ======== STICKY NAV ======== -->
   <nav class="sticky-nav" id="stickyNav" aria-label="Quick navigation">
     <span class="sticky-nav-name">Petr Junák</span>
     <div class="sticky-nav-links">
-      <a href="#experience">Experience</a>
-      <a href="#skills">Skills</a>
-      <a href="#languages">Languages</a>
-      <a href="#education">Education</a>
-      <a href="#hobbies">Hobbies</a>
-      <a href="models/">Models</a>
-      <a href="projects/">Projects</a>
+      <a href="#experience" data-i18n="nav.experience">Experience</a>
+      <a href="#skills" data-i18n="nav.skills">Skills</a>
+      <a href="#languages" data-i18n="nav.languages">Languages</a>
+      <a href="#education" data-i18n="nav.education">Education</a>
+      <a href="#hobbies" data-i18n="nav.hobbies">Hobbies</a>
+      <a href="models/" data-i18n="nav.models">Models</a>
+      <a href="projects/" data-i18n="nav.projects">Projects</a>
     </div>
-    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
-      <i class="fa-solid fa-moon"></i>
-      <i class="fa-solid fa-sun"></i>
-    </button>
-    <a href="mailto:junakpetr@gmail.com" class="sticky-nav-cta">Email me</a>
+    <a href="mailto:junakpetr@gmail.com" class="sticky-nav-cta" data-i18n="nav.email_cta">Email me</a>
   </nav>
 
   <!-- ======== HERO ======== -->
-  <header class="hero section">
+  <header class="hero section" id="main">
     <div class="container">
       <div class="hero-inner">
         <div class="hero-text">
@@ -60,23 +93,23 @@
 
           <div class="availability-badge">
             <span class="availability-dot"></span>
-            Available for new opportunities
+            <span data-i18n="hero.available">Available for new opportunities</span>
           </div>
 
-          <p class="hero-role">Software &amp; IT Engineer</p>
-          <p class="hero-tagline">Python · JavaScript · Networking · CI/CD · Git</p>
+          <p class="hero-role" data-i18n="hero.role">Software &amp; IT Engineer</p>
+          <p class="hero-tagline" data-i18n="hero.tagline">Python · JavaScript · Networking · CI/CD · Git</p>
 
           <div class="hero-education">
             <i class="fa-solid fa-graduation-cap"></i>
-            BSc in Information Technology — Brno University of Technology, 2024
+            <span data-i18n="hero.education">BSc in Information Technology — Brno University of Technology, 2024</span>
           </div>
 
           <div class="hero-contacts">
-            <a href="mailto:junakpetr@gmail.com" class="hero-contact-link hero-contact-link--labeled" data-tooltip="Email" aria-label="Email">
+            <a href="mailto:junakpetr@gmail.com" class="hero-contact-link hero-contact-link--labeled" data-i18n-attr="data-tooltip:hero.tip_email;aria-label:hero.tip_email" data-tooltip="Email" aria-label="Email">
               <i class="fa-solid fa-envelope"></i>
               <span class="contact-label">junakpetr@gmail.com</span>
             </a>
-            <a href="tel:+420605581519" class="hero-contact-link hero-contact-link--labeled" data-tooltip="Phone" aria-label="Phone">
+            <a href="tel:+420605581519" class="hero-contact-link hero-contact-link--labeled" data-i18n-attr="data-tooltip:hero.tip_phone;aria-label:hero.tip_phone" data-tooltip="Phone" aria-label="Phone">
               <i class="fa-solid fa-phone"></i>
               <span class="contact-label">+420 605 581 519</span>
             </a>
@@ -86,25 +119,22 @@
             <a href="https://linkedin.com/in/petr-junak" class="hero-contact-link" data-tooltip="LinkedIn" aria-label="LinkedIn" target="_blank" rel="noopener">
               <i class="fa-brands fa-linkedin-in"></i>
             </a>
-            <!-- PDF download disabled — add assets/petr-junak-cv.pdf to enable -->
-            <!--
-            <a href="assets/petr-junak-cv.pdf" class="hero-contact-link" data-tooltip="Download CV" aria-label="Download CV" download>
+            <a href="assets/cv-en.pdf" class="hero-contact-link" data-i18n-attr="href:cv.pdf_path;data-tooltip:cv.tooltip;aria-label:cv.tooltip" data-tooltip="Download CV" aria-label="Download CV" download>
               <i class="fa-solid fa-file-arrow-down"></i>
             </a>
-            -->
           </div>
 
           <div class="hero-skills-strip">
             <span class="hero-skill-chip">Python</span>
             <span class="hero-skill-chip">CI/CD</span>
-            <span class="hero-skill-chip">Networking</span>
+            <span class="hero-skill-chip" data-i18n="hero.chip_networking">Networking</span>
             <span class="hero-skill-chip">JavaScript</span>
             <span class="hero-skill-chip">Git &amp; GitHub</span>
           </div>
         </div>
 
         <div class="hero-photo-wrapper">
-          <img src="assets/face.png" alt="Petr Junák" class="hero-photo">
+          <img src="assets/face.png" alt="Petr Junák" class="hero-photo" fetchpriority="high" width="180" height="180">
         </div>
       </div>
     </div>
@@ -114,16 +144,16 @@
   <section class="section section--compact" id="about">
     <div class="container">
       <div class="about-summary reveal">
-        <p class="about-text">
+        <p class="about-text" data-i18n="about.text">
           I'm a software and IT engineer with 3+ years of professional experience across application development,
           network infrastructure, and automation. I've built monitoring tools from scratch, established CI/CD
           pipelines, and worked across the stack from Python scripts to ServiceNow integrations.
-          I'm equally comfortable diving into code and handling infrastructure challenges — and I bring a maker's 
+          I'm equally comfortable diving into code and handling infrastructure challenges — and I bring a maker's
           instinct for creative problem-solving to everything I work on.
         </p>
         <aside class="about-philosophy">
           <i class="fa-solid fa-quote-left"></i>
-          A broken thing is an opportunity to learn by fixing it.
+          <span data-i18n="about.philosophy">A broken thing is an opportunity to learn by fixing it.</span>
         </aside>
       </div>
     </div>
@@ -132,26 +162,26 @@
   <!-- ======== EXPERIENCE ======== -->
   <section class="section" id="experience">
     <div class="container">
-      <h2 class="section-title reveal">Experience</h2>
+      <h2 class="section-title reveal" data-i18n="experience.title">Experience</h2>
       <div class="experience-timeline reveal-children">
 
         <div class="exp-timeline-item">
           <div class="exp-year">2023–2025</div>
-          <article class="glass-card experience-card" data-roles="dev it" tabindex="0">
+          <article class="glass-card experience-card" data-roles="dev it" tabindex="0" role="button" aria-expanded="false">
             <div class="exp-card-header">
               <div class="exp-card-header-main">
-                <h3 class="exp-role">IT Analyst</h3>
+                <h3 class="exp-role" data-i18n="exp.honeywell_it.role">IT Analyst</h3>
                 <div class="exp-company">Honeywell</div>
-                <div class="exp-meta">Sep 2023 – Mar 2025 · Brno, CZ</div>
+                <div class="exp-meta" data-i18n="exp.honeywell_it.meta">Sep 2023 – Mar 2025 · Brno, CZ</div>
               </div>
               <i class="fa-solid fa-chevron-down exp-chevron" aria-hidden="true"></i>
             </div>
             <div class="exp-card-body">
               <div class="exp-card-body-inner">
                 <ul class="exp-details">
-                  <li data-roles="dev it">Scaled a local audit script into a comprehensive monitoring application for <strong>tracking configuration compliance</strong> and performance bottlenecks.</li>
-                  <li data-roles="dev it">Standardized development workflows by establishing <strong>GitHub CI/CD</strong> and testing guidelines, reducing deployment errors.</li>
-                  <li data-roles="it">Co-developed user-facing ServiceNow forms that simplified reporting of device issues.</li>
+                  <li data-roles="dev it" data-i18n="exp.honeywell_it.item1">Scaled a local audit script into a comprehensive monitoring application for <strong>tracking configuration compliance</strong> and performance bottlenecks.</li>
+                  <li data-roles="dev it" data-i18n="exp.honeywell_it.item2">Standardized development workflows by establishing <strong>GitHub CI/CD</strong> and testing guidelines, reducing deployment errors.</li>
+                  <li data-roles="it" data-i18n="exp.honeywell_it.item3">Co-developed user-facing ServiceNow forms that simplified reporting of device issues.</li>
                 </ul>
               </div>
             </div>
@@ -160,20 +190,20 @@
 
         <div class="exp-timeline-item">
           <div class="exp-year">2023</div>
-          <article class="glass-card experience-card" data-roles="it" tabindex="0">
+          <article class="glass-card experience-card" data-roles="it" tabindex="0" role="button" aria-expanded="false">
             <div class="exp-card-header">
               <div class="exp-card-header-main">
-                <h3 class="exp-role">Network Technician</h3>
+                <h3 class="exp-role" data-i18n="exp.honeywell_net.role">Network Technician</h3>
                 <div class="exp-company">Honeywell</div>
-                <div class="exp-meta">Jan 2023 – Sep 2023 · Brno, CZ</div>
+                <div class="exp-meta" data-i18n="exp.honeywell_net.meta">Jan 2023 – Sep 2023 · Brno, CZ</div>
               </div>
               <i class="fa-solid fa-chevron-down exp-chevron" aria-hidden="true"></i>
             </div>
             <div class="exp-card-body">
               <div class="exp-card-body-inner">
                 <ul class="exp-details">
-                  <li data-roles="it">Shadowed senior engineers to learn infrastructure and IT workflows.</li>
-                  <li data-roles="dev it"><strong>Led a small team</strong> to develop automated audit solution that <strong>aggregated network accessibility data</strong> to flag discontinued devices, cutting unnecessary licensing costs.</li>
+                  <li data-roles="it" data-i18n="exp.honeywell_net.item1">Shadowed senior engineers to learn infrastructure and IT workflows.</li>
+                  <li data-roles="dev it" data-i18n="exp.honeywell_net.item2"><strong>Led a small team</strong> to develop automated audit solution that <strong>aggregated network accessibility data</strong> to flag discontinued devices, cutting unnecessary licensing costs.</li>
                 </ul>
               </div>
             </div>
@@ -182,20 +212,20 @@
 
         <div class="exp-timeline-item">
           <div class="exp-year">2019</div>
-          <article class="glass-card experience-card" data-roles="dev" tabindex="0">
+          <article class="glass-card experience-card" data-roles="dev" tabindex="0" role="button" aria-expanded="false">
             <div class="exp-card-header">
               <div class="exp-card-header-main">
-                <h3 class="exp-role">Software Engineer Intern</h3>
+                <h3 class="exp-role" data-i18n="exp.redhat.role">Software Engineer Intern</h3>
                 <div class="exp-company exp-company--redhat">Red Hat</div>
-                <div class="exp-meta">Jun 2019 – Sep 2019 · Brno, CZ</div>
+                <div class="exp-meta" data-i18n="exp.redhat.meta">Jun 2019 – Sep 2019 · Brno, CZ</div>
               </div>
               <i class="fa-solid fa-chevron-down exp-chevron" aria-hidden="true"></i>
             </div>
             <div class="exp-card-body">
               <div class="exp-card-body-inner">
                 <ul class="exp-details">
-                  <li data-roles="dev">High school internship; spent most of the time <strong>debugging and linting Python code</strong> using pylint and similar tools.</li>
-                  <li data-roles="dev">Contributed to an <strong>RPM packaging wizard UI</strong> with the engineering team.</li>
+                  <li data-roles="dev" data-i18n="exp.redhat.item1">High school internship; spent most of the time <strong>debugging and linting Python code</strong> using pylint and similar tools.</li>
+                  <li data-roles="dev" data-i18n="exp.redhat.item2">Contributed to an <strong>RPM packaging wizard UI</strong> with the engineering team.</li>
                 </ul>
               </div>
             </div>
@@ -204,20 +234,20 @@
 
         <div class="exp-timeline-item">
           <div class="exp-year">2018–2020</div>
-          <article class="glass-card experience-card" data-roles="dev it" tabindex="0">
+          <article class="glass-card experience-card" data-roles="dev it" tabindex="0" role="button" aria-expanded="false">
             <div class="exp-card-header">
               <div class="exp-card-header-main">
-                <h3 class="exp-role">Smart Home Technician</h3>
+                <h3 class="exp-role" data-i18n="exp.livinin.role">Smart Home Technician</h3>
                 <div class="exp-company">LIVIN'IN</div>
-                <div class="exp-meta">Jul 2018 – Aug 2020 · Brno, CZ</div>
+                <div class="exp-meta" data-i18n="exp.livinin.meta">Jul 2018 – Aug 2020 · Brno, CZ</div>
               </div>
               <i class="fa-solid fa-chevron-down exp-chevron" aria-hidden="true"></i>
             </div>
             <div class="exp-card-body">
               <div class="exp-card-body-inner">
                 <ul class="exp-details">
-                  <li data-roles="it">Installed and wired smart home systems independently.</li>
-                  <li data-roles="it">Hands-on electronics work including soldering sensors and security components such as fingerprint scanners.</li>
+                  <li data-roles="it" data-i18n="exp.livinin.item1">Installed and wired smart home systems independently.</li>
+                  <li data-roles="it" data-i18n="exp.livinin.item2">Hands-on electronics work including soldering sensors and security components such as fingerprint scanners.</li>
                 </ul>
               </div>
             </div>
@@ -234,10 +264,10 @@
       <div class="skills-languages-row">
 
         <div>
-          <h2 class="section-title reveal">Strengths &amp; Skills</h2>
+          <h2 class="section-title reveal" data-i18n="skills.title">Strengths &amp; Skills</h2>
           <div class="glass-card reveal">
             <div class="skills-group">
-              <div class="skills-group-label">Programming</div>
+              <div class="skills-group-label" data-i18n="skills.group_programming">Programming</div>
               <div class="skills-tags reveal-children">
                 <span class="skill-tag skill-tag--prog" data-roles="dev">Python</span>
                 <span class="skill-tag skill-tag--prog" data-roles="dev">C &amp; C++</span>
@@ -245,48 +275,48 @@
               </div>
             </div>
             <div class="skills-group">
-              <div class="skills-group-label">Tools</div>
+              <div class="skills-group-label" data-i18n="skills.group_tools">Tools</div>
               <div class="skills-tags reveal-children">
-                <span class="skill-tag skill-tag--tools" data-roles="dev">Testing &amp; debugging</span>
+                <span class="skill-tag skill-tag--tools" data-roles="dev" data-i18n="skill.testing_debugging">Testing &amp; debugging</span>
                 <span class="skill-tag skill-tag--tools" data-roles="dev it">Git &amp; GitHub</span>
                 <span class="skill-tag skill-tag--tools" data-roles="dev it">CI/CD</span>
-                <span class="skill-tag skill-tag--tools" data-roles="it">Networking</span>
-                <span class="skill-tag skill-tag--tools" data-roles="it">Monitoring</span>
+                <span class="skill-tag skill-tag--tools" data-roles="it" data-i18n="skill.networking">Networking</span>
+                <span class="skill-tag skill-tag--tools" data-roles="it" data-i18n="skill.monitoring">Monitoring</span>
               </div>
             </div>
             <div class="skills-group">
-              <div class="skills-group-label">Soft Skills</div>
+              <div class="skills-group-label" data-i18n="skills.group_soft">Soft Skills</div>
               <div class="skills-tags reveal-children">
-                <span class="skill-tag skill-tag--soft" data-roles="dev it">Hard-working</span>
-                <span class="skill-tag skill-tag--soft" data-roles="dev it">Fast learner</span>
-                <span class="skill-tag skill-tag--soft" data-roles="dev it">Problem solving oriented</span>
-                <span class="skill-tag skill-tag--soft" data-roles="dev it">Team player</span>
-                <span class="skill-tag skill-tag--soft" data-roles="dev it">Creative</span>
+                <span class="skill-tag skill-tag--soft" data-roles="dev it" data-i18n="skill.hardworking">Hard-working</span>
+                <span class="skill-tag skill-tag--soft" data-roles="dev it" data-i18n="skill.fast_learner">Fast learner</span>
+                <span class="skill-tag skill-tag--soft" data-roles="dev it" data-i18n="skill.problem_solving">Problem solving oriented</span>
+                <span class="skill-tag skill-tag--soft" data-roles="dev it" data-i18n="skill.team_player">Team player</span>
+                <span class="skill-tag skill-tag--soft" data-roles="dev it" data-i18n="skill.creative">Creative</span>
               </div>
             </div>
             <div class="skills-group">
-              <div class="skills-group-label">Maker</div>
+              <div class="skills-group-label" data-i18n="skills.group_maker">Maker</div>
               <div class="skills-tags reveal-children">
-                <span class="skill-tag skill-tag--maker" data-roles="dev it">3D Design &amp; Modeling</span>
-                <span class="skill-tag skill-tag--maker" data-roles="dev it">Soldering</span>
+                <span class="skill-tag skill-tag--maker" data-roles="dev it" data-i18n="skill.3d_design">3D Design &amp; Modeling</span>
+                <span class="skill-tag skill-tag--maker" data-roles="dev it" data-i18n="skill.soldering">Soldering</span>
               </div>
             </div>
           </div>
         </div>
 
         <div id="languages">
-          <h2 class="section-title reveal">Languages</h2>
+          <h2 class="section-title reveal" data-i18n="languages.title">Languages</h2>
           <div class="glass-card reveal">
             <div class="languages-list">
               <div class="language-item">
-                <span class="language-name" id="lang-czech">Czech</span>
+                <span class="language-name" id="lang-czech" data-i18n="lang.czech">Czech</span>
                 <div class="language-bar-container" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" aria-labelledby="lang-czech">
                   <div class="language-bar" data-width="100"></div>
                 </div>
-                <span class="language-level">Native</span>
+                <span class="language-level" data-i18n="lang.level_native">Native</span>
               </div>
               <div class="language-item">
-                <span class="language-name" id="lang-english">English</span>
+                <span class="language-name" id="lang-english" data-i18n="lang.english">English</span>
                 <div class="language-bar-container" role="progressbar" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100" aria-labelledby="lang-english">
                   <div class="language-bar" data-width="90"></div>
                 </div>
@@ -303,18 +333,19 @@
   <!-- ======== EDUCATION ======== -->
   <section class="section" id="education">
     <div class="container">
-      <h2 class="section-title reveal">Education</h2>
+      <h2 class="section-title reveal" data-i18n="education.title">Education</h2>
       <div class="glass-card reveal education-card">
         <div class="education-header">
           <div>
-            <h3 class="education-degree">Bachelor's in Information Technology</h3>
-            <div class="education-school">Brno University of Technology</div>
-            <div class="education-meta">Sep 2019 – Jul 2024 · Brno, CZ</div>
+            <h3 class="education-degree" data-i18n="education.degree">Bachelor's in Information Technology</h3>
+            <div class="education-school" data-i18n="education.school">Brno University of Technology</div>
+            <div class="education-meta" data-i18n="education.meta">Sep 2019 – Jul 2024 · Brno, CZ</div>
           </div>
           <i class="fa-solid fa-graduation-cap education-icon" aria-hidden="true"></i>
         </div>
         <p class="education-thesis">
-          <strong>Thesis:</strong> Smart home sleep optimization — predicted ideal sleep onset using a random forest regression model trained on smart ring sleep data, user physical state, and target wake time; controlled smart lighting to promote natural tiredness.
+          <strong data-i18n="education.thesis_label">Thesis:</strong>
+          <span data-i18n="education.thesis_text">Smart home sleep optimization — predicted ideal sleep onset using a random forest regression model trained on smart ring sleep data, user physical state, and target wake time; controlled smart lighting to promote natural tiredness.</span>
         </p>
       </div>
     </div>
@@ -323,14 +354,14 @@
   <!-- ======== HOBBIES ======== -->
   <section class="section" id="hobbies">
     <div class="container">
-      <h2 class="section-title reveal">Hobbies</h2>
+      <h2 class="section-title reveal" data-i18n="hobbies.title">Hobbies</h2>
       <div class="hobbies-wrapper reveal">
         <div class="donut-chart-container" id="donutChart">
           <svg viewBox="0 0 200 200">
             <!-- Segments drawn by JS -->
           </svg>
           <div class="donut-center-text">
-            <span class="donut-label">Interact with a segment</span>
+            <span class="donut-label" data-i18n="hobby.hint_hover">Hover a segment</span>
           </div>
         </div>
         <div class="hobbies-legend" id="hobbiesLegend">
@@ -344,19 +375,19 @@
   <!-- ======== EXPLORE MORE ======== -->
   <section class="section section--compact" id="explore">
     <div class="container">
-      <h2 class="section-title reveal">Explore More</h2>
+      <h2 class="section-title reveal" data-i18n="explore.title">Explore More</h2>
       <div class="explore-cards reveal-children">
         <a href="models/" class="glass-card explore-card">
           <i class="fa-solid fa-cube explore-card-icon"></i>
-          <h3 class="explore-card-title">3D Models</h3>
-          <p class="explore-card-desc">Browse my 3D printable designs for Rat Rig V-Core 4, Prusa, and more on Printables.</p>
-          <span class="explore-card-cta">View models <i class="fa-solid fa-arrow-right"></i></span>
+          <h3 class="explore-card-title" data-i18n="explore.models_title">3D Models</h3>
+          <p class="explore-card-desc" data-i18n="explore.models_desc">Browse my 3D printable designs for Rat Rig V-Core 4, Prusa, and more on Printables.</p>
+          <span class="explore-card-cta"><span data-i18n="explore.models_cta">View models</span> <i class="fa-solid fa-arrow-right"></i></span>
         </a>
         <a href="projects/" class="glass-card explore-card">
           <i class="fa-solid fa-code explore-card-icon"></i>
-          <h3 class="explore-card-title">Projects</h3>
-          <p class="explore-card-desc">D&amp;D tools, home automation, university coursework, and open-source contributions on GitHub.</p>
-          <span class="explore-card-cta">View projects <i class="fa-solid fa-arrow-right"></i></span>
+          <h3 class="explore-card-title" data-i18n="explore.projects_title">Projects</h3>
+          <p class="explore-card-desc" data-i18n="explore.projects_desc">D&amp;D tools, home automation, university coursework, and open-source contributions on GitHub.</p>
+          <span class="explore-card-cta"><span data-i18n="explore.projects_cta">View projects</span> <i class="fa-solid fa-arrow-right"></i></span>
         </a>
       </div>
     </div>
@@ -365,23 +396,21 @@
   <!-- ======== FOOTER ======== -->
   <footer class="footer">
     <div class="container">
-      <!-- PDF download disabled — add assets/petr-junak-cv.pdf to enable -->
-      <!--
-      <a href="assets/petr-junak-cv.pdf" class="footer-download" download>
+      <a href="assets/cv-en.pdf" class="footer-download" data-i18n-attr="href:cv.pdf_path" download>
         <i class="fa-solid fa-file-arrow-down"></i>
-        Download CV (PDF)
+        <span data-i18n="cv.footer_label">Download CV (PDF)</span>
       </a>
-      -->
       <div class="footer-links">
         <a href="mailto:junakpetr@gmail.com" class="footer-link" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
         <a href="tel:+420605581519" class="footer-link" aria-label="Phone"><i class="fa-solid fa-phone"></i></a>
         <a href="https://github.com/pjunak" class="footer-link" aria-label="GitHub" target="_blank" rel="noopener"><i class="fa-brands fa-github"></i></a>
         <a href="https://linkedin.com/in/petr-junak" class="footer-link" aria-label="LinkedIn" target="_blank" rel="noopener"><i class="fa-brands fa-linkedin-in"></i></a>
       </div>
-      <p class="footer-copy">&copy; 2026 Petr Junák. All rights reserved.</p>
+      <p class="footer-copy" data-i18n="footer.copy">&copy; 2026 Petr Junák. All rights reserved.</p>
     </div>
   </footer>
 
+  <script src="js/i18n.js" defer></script>
   <script src="js/main.js" defer></script>
 </body>
 </html>

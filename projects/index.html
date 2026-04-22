@@ -4,14 +4,37 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <title>Projects — Petr Junák</title>
-  <meta name="description" content="Programming projects by Petr Junák — D&D tools, automation, university coursework, and open-source contributions.">
-  <meta property="og:title" content="Projects — Petr Junák">
-  <meta property="og:description" content="Programming projects by Petr Junák — D&D tools, automation, and more.">
+  <title data-i18n="projects.meta_title">Projects — Petr Junák</title>
+  <meta name="description" data-i18n-attr="content:projects.meta_description" content="Programming projects by Petr Junák — D&D tools, automation, university coursework, and open-source contributions.">
+  <meta property="og:title" data-i18n-attr="content:projects.meta_title" content="Projects — Petr Junák">
+  <meta property="og:description" data-i18n-attr="content:projects.meta_description" content="Programming projects by Petr Junák — D&D tools, automation, and more.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://petr.junak.eu/projects/">
+  <meta property="og:image" content="https://petr.junak.eu/assets/face.png">
   <meta name="theme-color" content="#F8F7FC" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#0E0E18" media="(prefers-color-scheme: dark)">
+
+  <!-- Early language + theme detection (prevents FOUC for Czech visitors) -->
+  <script>
+    (function () {
+      try {
+        var supported = ['en', 'cs'];
+        var saved = localStorage.getItem('lang');
+        var lang;
+        if (saved && supported.indexOf(saved) !== -1) {
+          lang = saved;
+        } else {
+          var browser = (navigator.language || 'en').toLowerCase().split('-')[0];
+          lang = (browser === 'cs' || browser === 'sk') ? 'cs' : 'en';
+        }
+        document.documentElement.lang = lang;
+
+        var theme = localStorage.getItem('theme');
+        if (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches) theme = 'dark';
+        if (theme) document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) { /* localStorage unavailable — fall back to HTML defaults */ }
+    })();
+  </script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,36 +49,43 @@
 </head>
 <body>
 
+<a href="#main" class="skip-link">Skip to content</a>
+
+<!-- ======== PAGE CONTROLS (always visible) ======== -->
+  <div class="page-controls" role="group" aria-label="Page controls">
+    <button class="lang-toggle" id="langToggle" type="button" aria-label="Switch language">EN</button>
+    <button class="theme-toggle" id="themeToggle" data-i18n-attr="aria-label:nav.theme_toggle" aria-label="Toggle dark mode">
+      <i class="fa-solid fa-moon"></i>
+      <i class="fa-solid fa-sun"></i>
+    </button>
+  </div>
+
 <!-- ======== TOP NAV ======== -->
   <nav class="subpage-nav" aria-label="Page navigation">
-    <a href="../" class="subpage-back"><i class="fa-solid fa-arrow-left"></i> Back to CV</a>
+    <a href="../" class="subpage-back"><i class="fa-solid fa-arrow-left"></i> <span data-i18n="projects.back">Back to CV</span></a>
     <div class="subpage-nav-right">
-      <a href="../models/" class="subpage-sibling-link">3D Models <i class="fa-solid fa-arrow-right"></i></a>
-      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
-        <i class="fa-solid fa-moon"></i>
-        <i class="fa-solid fa-sun"></i>
-      </button>
+      <a href="../models/" class="subpage-sibling-link"><span data-i18n="projects.sibling_models">3D Models</span> <i class="fa-solid fa-arrow-right"></i></a>
     </div>
   </nav>
 
   <!-- ======== HEADER ======== -->
-  <header class="subpage-hero section">
+  <header class="subpage-hero section" id="main">
     <div class="container">
       <h1 class="subpage-title reveal">
         <i class="fa-solid fa-code"></i>
-        Projects
+        <span data-i18n="projects.title">Projects</span>
       </h1>
-      <p class="subpage-subtitle reveal">
+      <p class="subpage-subtitle reveal" data-i18n="projects.subtitle">
         A selection of personal and university projects. Most are on GitHub — feel free to explore, fork, or contribute.
       </p>
 
       <!-- Filter chips -->
       <div class="filter-bar reveal">
-        <button class="filter-chip active" data-filter="all">All</button>
-        <button class="filter-chip" data-filter="personal">Personal</button>
-        <button class="filter-chip" data-filter="dnd">D&amp;D &amp; Creative</button>
-        <button class="filter-chip" data-filter="university">University</button>
-        <button class="filter-chip" data-filter="oss">Open Source</button>
+        <button class="filter-chip active" data-filter="all" data-i18n="projects.filter_all">All</button>
+        <button class="filter-chip" data-filter="personal" data-i18n="projects.filter_personal">Personal</button>
+        <button class="filter-chip" data-filter="dnd" data-i18n="projects.filter_dnd">D&amp;D &amp; Creative</button>
+        <button class="filter-chip" data-filter="university" data-i18n="projects.filter_university">University</button>
+        <button class="filter-chip" data-filter="oss" data-i18n="projects.filter_oss">Open Source</button>
       </div>
     </div>
   </header>
@@ -70,7 +100,7 @@
       <div class="showcase-profile-link reveal">
         <a href="https://github.com/pjunak" target="_blank" rel="noopener" class="profile-cta">
           <i class="fa-brands fa-github"></i>
-          View all repositories on GitHub
+          <span data-i18n="projects.view_all">View all repositories on GitHub</span>
           <i class="fa-solid fa-arrow-up-right-from-square"></i>
         </a>
       </div>
@@ -85,11 +115,13 @@
         <a href="https://github.com/pjunak" class="footer-link" aria-label="GitHub" target="_blank" rel="noopener"><i class="fa-brands fa-github"></i></a>
         <a href="https://linkedin.com/in/petr-junak" class="footer-link" aria-label="LinkedIn" target="_blank" rel="noopener"><i class="fa-brands fa-linkedin-in"></i></a>
       </div>
-      <p class="footer-copy">&copy; 2026 Petr Junák</p>
+      <p class="footer-copy" data-i18n="footer.copy_short">&copy; 2026 Petr Junák</p>
     </div>
   </footer>
 
+  <script src="../js/i18n.js" defer></script>
   <script src="../js/main.js" defer></script>
+  <script src="../js/subpage.js" defer></script>
   <script src="../js/projects.js" defer></script>
 </body>
 </html>

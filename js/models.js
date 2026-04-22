@@ -5,44 +5,72 @@
    to add/remove/reorder models.
    ======================================== */
 
+/** Model descriptions as {en, cs} objects — titles stay in English (product/part names). */
 const MODELS = [
   {
     title: 'Clip for RatRig V-core 4 (sleeved PTFE)',
-    desc: 'Clip for pinning sleeved cables and sleeved PTFE tube to the frame.',
+    desc: {
+      en: 'Clip for pinning sleeved cables and sleeved PTFE tube to the frame.',
+      cs: 'Klip pro uchycení opletených kabelů a opletené PTFE trubičky k rámu.',
+    },
     url: 'https://www.printables.com/model/1084955-clip-for-ratrig-v-core-4-remixed-sleeved-ptfe',
     image: 'https://media.printables.com/media/prints/1084955/images/8230416_fc3fc8ff-311f-49a4-b2a9-76edce64af6d_aa6bca77-50b5-45e4-a706-3f6c67ed17a2/thumbs/inside/640x480/png/2.webp',
     category: 'ratrig',
-    tag: { label: 'Rat Rig V-Core 4', className: 'showcase-tag--ratrig' },
+    tagKey: 'ratrig',
     stats: { downloads: 18, likes: 87, collections: 35 },
   },
   {
     title: 'Orbitool O2S Mount',
-    desc: 'Mount for Orbitool O2S toolboard paired with Rat Rig V-Core 4. Features ziptie loops and iterative improvements.',
+    desc: {
+      en: 'Mount for Orbitool O2S toolboard paired with Rat Rig V-Core 4. Features ziptie loops and iterative improvements.',
+      cs: 'Držák Orbitool O2S toolboardu pro Rat Rig V-Core 4. Obsahuje očka pro stahovací pásky a postupně vylepšovanou konstrukci.',
+    },
     url: 'https://www.printables.com/model/1420726-orbitool-o2s-mount-for-ratrig-v-core-4',
     image: 'https://media.printables.com/media/prints/cfaeb3a2-2dcf-4a47-8d62-86895e490e71/images/10777640_05ce3206-0576-4859-8f00-6825fc5063b2_de3305c4-a84b-4db5-97e2-dfdec202502c/thumbs/inside/640x480/png/screenshot-2025-09-29-165046.webp',
     category: 'ratrig',
-    tag: { label: 'Rat Rig V-Core 4', className: 'showcase-tag--ratrig' },
+    tagKey: 'ratrig',
     stats: { downloads: 4, likes: 16, collections: 7 },
   },
   {
     title: 'Manta M8P 2.0 Mounting Bracket',
-    desc: 'Bracket for mounting the BTT Manta M8P 2.0 board to the electronics enclosure. Remixed from official Rat Rig files.',
+    desc: {
+      en: 'Bracket for mounting the BTT Manta M8P 2.0 board to the electronics enclosure. Remixed from official Rat Rig files.',
+      cs: 'Držák pro montáž desky BTT Manta M8P 2.0 do krytu elektroniky. Remix z oficiálních souborů Rat Rig.',
+    },
     url: 'https://www.printables.com/model/1223982-manta-m8p-20-mounting-bracket-for-rat-rig-v-core-4',
     image: 'https://media.printables.com/media/prints/1223982/images/9176811_9e8dfdbd-dfd0-4815-8b57-00d272dbf257_2eb2d348-6cef-4ab3-8e23-7e6637440f23/thumbs/inside/640x480/png/screenshot-2025-03-10-044823.webp',
     category: 'ratrig',
-    tag: { label: 'Rat Rig V-Core 4', className: 'showcase-tag--ratrig' },
+    tagKey: 'ratrig',
     stats: { downloads: 4, likes: 13, collections: 3 },
   },
   {
     title: 'Bear Upgrade LED Light Bar (10mm Z rods)',
-    desc: 'Remix of the Bear Upgrade LED light bar adapted for 10mm Z-axis rods on Prusa i3 MK2/MK3.',
+    desc: {
+      en: 'Remix of the Bear Upgrade LED light bar adapted for 10mm Z-axis rods on Prusa i3 MK2/MK3.',
+      cs: 'Remix LED světelné lišty Bear Upgrade upravený pro 10mm tyče osy Z na Prusa i3 MK2/MK3.',
+    },
     url: 'https://www.printables.com/model/552422-bear-upgrade-led-light-bar-10mm-z-axis-rods-prusa-',
     image: 'https://media.printables.com/media/prints/552422/images/4435428_e8af6fb9-8c2d-4a68-948f-6de602dd65c8/thumbs/inside/640x480/jpg/pxl_20230813_215412532.webp',
     category: 'prusa',
-    tag: { label: 'Prusa', className: 'showcase-tag--prusa' },
+    tagKey: 'prusa',
     stats: { downloads: 8, likes: 27, collections: 8 },
   },
 ];
+
+const MODEL_TAG_META = {
+  ratrig: { label: 'Rat Rig V-Core 4', className: 'showcase-tag--ratrig' },
+  prusa:  { label: 'Prusa',           className: 'showcase-tag--prusa' },
+};
+
+function modelsTranslate(key, fallback) {
+  return window.i18n ? window.i18n.t(key) : (fallback !== undefined ? fallback : key);
+}
+
+function resolveModelDesc(model) {
+  const lang = window.i18n ? window.i18n.lang : 'en';
+  if (model.desc && typeof model.desc === 'object') return model.desc[lang] || model.desc.en;
+  return model.desc || '';
+}
 
 function escapeHtml(str) {
   const div = document.createElement('div');
@@ -60,6 +88,10 @@ function buildModelCard(model) {
   card.tabIndex = 0;
 
   const { downloads, likes, collections } = model.stats;
+  const tag = MODEL_TAG_META[model.tagKey] || { label: '', className: '' };
+  const collectionsLabel = modelsTranslate('models.stat_collections', 'collections');
+  const ctaLabel = modelsTranslate('models.cta_view_printables', 'View on Printables');
+  const description = resolveModelDesc(model);
 
   card.innerHTML = `
     <div class="showcase-card-img">
@@ -67,16 +99,16 @@ function buildModelCard(model) {
            alt="${escapeHtml(model.title)}" loading="lazy">
     </div>
     <div class="showcase-card-body">
-      <span class="showcase-tag ${model.tag.className}">${escapeHtml(model.tag.label)}</span>
+      <span class="showcase-tag ${tag.className}">${escapeHtml(tag.label)}</span>
       <h3 class="showcase-card-title">${escapeHtml(model.title)}</h3>
-      <p class="showcase-card-desc">${escapeHtml(model.desc)}</p>
+      <p class="showcase-card-desc">${escapeHtml(description)}</p>
       <div class="showcase-card-stats">
         <span><i class="fa-solid fa-download"></i> ${downloads}</span>
         <span><i class="fa-solid fa-heart"></i> ${likes}</span>
-        <span><i class="fa-solid fa-layer-group"></i> ${collections} collections</span>
+        <span><i class="fa-solid fa-layer-group"></i> ${collections} ${escapeHtml(collectionsLabel)}</span>
       </div>
     </div>
-    <span class="showcase-card-cta">View on Printables <i class="fa-solid fa-arrow-up-right-from-square"></i></span>
+    <span class="showcase-card-cta"><span>${escapeHtml(ctaLabel)}</span> <i class="fa-solid fa-arrow-up-right-from-square"></i></span>
   `;
 
   return card;
@@ -91,9 +123,14 @@ function initModels() {
     grid.appendChild(buildModelCard(model));
   });
 
-  // Initialize filter chips on the rendered cards
-  initFilterChips();
+  // subpage.js already wired chip delegation — just re-apply whatever filter is active
+  if (typeof reapplyActiveFilter === 'function') reapplyActiveFilter();
 }
 
 /* Script loaded with defer — DOM is ready */
 initModels();
+
+// Re-render cards when language changes so descriptions and CTA text update.
+document.addEventListener('i18n:change', () => {
+  initModels();
+});

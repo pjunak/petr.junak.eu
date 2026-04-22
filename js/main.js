@@ -31,25 +31,42 @@ function initStickyNav() {
 }
 
 /* ----------------------------------------
-   Expandable Experience Cards (touch)
+   Expandable Experience Cards
+   - Touch: tap to toggle (but let taps on links work)
+   - Keyboard: Enter/Space to toggle
+   - aria-expanded reflects the .expanded class
    ---------------------------------------- */
 function initExpandableCards() {
+  const cards = document.querySelectorAll('.experience-card');
+  if (!cards.length) return;
+
   const isTouch = window.matchMedia('(hover: none)').matches;
 
-  document.querySelectorAll('.experience-card').forEach((card) => {
-    // Touch devices: toggle on click
+  function toggle(card) {
+    const now = card.classList.toggle('expanded');
+    card.setAttribute('aria-expanded', now ? 'true' : 'false');
+  }
+
+  cards.forEach((card) => {
     if (isTouch) {
-      card.addEventListener('click', () => {
-        card.classList.toggle('expanded');
+      card.addEventListener('click', (e) => {
+        // Don't swallow taps on links/buttons inside the card
+        if (e.target.closest('a, button')) return;
+        toggle(card);
       });
     }
 
-    // Keyboard: toggle on Enter/Space for all devices
     card.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        card.classList.toggle('expanded');
+        toggle(card);
       }
+    });
+
+    // Hover devices: keep aria-expanded in sync with the CSS :hover / :focus-visible expansion
+    card.addEventListener('focus', () => card.setAttribute('aria-expanded', 'true'));
+    card.addEventListener('blur', () => {
+      if (!card.classList.contains('expanded')) card.setAttribute('aria-expanded', 'false');
     });
   });
 }
@@ -133,50 +150,57 @@ function initLanguageBars() {
    Segments and legend items are keyboard-accessible.
    ---------------------------------------- */
 function initDonutChart() {
+  const svg = document.querySelector('#donutChart svg');
+  const centerText = document.querySelector('.donut-center-text');
+  const legend = document.getElementById('hobbiesLegend');
+  // Bail early on pages without the chart (subpages share main.js)
+  if (!svg || !centerText || !legend) return;
+
+  const t = (key, fallback) => (window.i18n ? window.i18n.t(key) : fallback);
+
   const hobbies = [
-    { name: 'Tinkering with 3D printers', value: 25, color: '#3E0097',
+    { key: 'hobby.3d_printers',  value: 25, color: '#3E0097',
       link: 'models/',
       examples: [
         { label: '3D Models',  url: 'models/' },
         { label: 'Printables', url: 'https://www.printables.com/@junakya_320548' },
       ]
     },
-    { name: 'D&D & creative writing',     value: 15, color: '#5A1DB8',
+    { key: 'hobby.dnd',          value: 15, color: '#5A1DB8',
       link: 'projects/',
       examples: [
         { label: 'DnDAudio', url: 'https://github.com/pjunak/DnDAudio' },
         { label: 'dm-tools', url: 'https://github.com/pjunak/dm-tools' },
       ]
     },
-    { name: 'Learning new things',         value: 15, color: '#7636CC' },
-    { name: 'Programming & OSS',           value: 10, color: '#8F52D9',
+    { key: 'hobby.learning',     value: 15, color: '#7636CC' },
+    { key: 'hobby.programming',  value: 10, color: '#8F52D9',
       link: 'projects/',
       examples: [
         { label: 'Projects', url: 'projects/' },
         { label: 'GitHub',   url: 'https://github.com/pjunak' },
       ]
     },
-    { name: '3D design & modeling',        value: 15, color: '#A870E3',
+    { key: 'hobby.3d_design',    value: 15, color: '#A870E3',
       link: 'models/',
       examples: [
         { label: '3D Models',  url: 'models/' },
         { label: 'Printables', url: 'https://www.printables.com/@junakya_320548' },
       ]
     },
-    { name: 'Video games & books',         value: 15, color: '#BF92EB' },
-    { name: 'Reading & writing poetry',    value: 5,  color: '#D4B5F2' },
+    { key: 'hobby.games_books',  value: 15, color: '#BF92EB' },
+    { key: 'hobby.poetry',       value: 5,  color: '#D4B5F2' },
   ];
 
-  const svg = document.querySelector('#donutChart svg');
-  const centerText = document.querySelector('.donut-center-text');
-  const legend = document.getElementById('hobbiesLegend');
   const examplesEl = document.getElementById('hobbiesExamples');
   const isTouch = window.matchMedia('(hover: none)').matches;
-  const defaultHint = isTouch ? 'Tap a segment' : 'Hover a segment';
+  const hintKey = isTouch ? 'hobby.hint_tap' : 'hobby.hint_hover';
+  const nameOf = (h) => t(h.key, h.key);
+  const getDefaultHint = () => t(hintKey, isTouch ? 'Tap a segment' : 'Hover a segment');
 
   // Give the center text an aria-live region so screen readers announce changes
   centerText.setAttribute('aria-live', 'polite');
-  centerText.innerHTML = `<span class="donut-label">${defaultHint}</span>`;
+  centerText.innerHTML = `<span class="donut-label">${getDefaultHint()}</span>`;
 
   // Give the SVG chart a role and label for accessibility
   svg.setAttribute('role', 'img');
@@ -222,7 +246,7 @@ function initDonutChart() {
   /** Highlight a specific hobby index in both chart and legend */
   function highlightSegment(index) {
     const hobby = hobbies[index];
-    centerText.innerHTML = `<span style="font-size:1.3rem">${hobby.value}%</span><span class="donut-label">${hobby.name}</span>`;
+    centerText.innerHTML = `<span style="font-size:1.3rem">${hobby.value}%</span><span class="donut-label">${nameOf(hobby)}</span>`;
     segments.forEach((s, j) => {
       s.style.opacity = j === index ? '1' : '0.4';
     });
@@ -234,7 +258,7 @@ function initDonutChart() {
 
   /** Clear all highlights back to default */
   function clearHighlight() {
-    centerText.innerHTML = `<span class="donut-label">${defaultHint}</span>`;
+    centerText.innerHTML = `<span class="donut-label">${getDefaultHint()}</span>`;
     segments.forEach((s) => { s.style.opacity = '1'; });
     legend.querySelectorAll('.legend-item').forEach((item) => {
       item.style.opacity = '1';
@@ -250,6 +274,7 @@ function initDonutChart() {
     const segLen = (hobby.value / 100) * circumference;
     const gap = 3;
     const dashLen = Math.max(segLen - gap, 0);
+    const label = nameOf(hobby);
 
     const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
     circle.setAttribute('cx', cx);
@@ -264,7 +289,7 @@ function initDonutChart() {
     // Accessibility: make each segment focusable and labelled
     circle.setAttribute('tabindex', '0');
     circle.setAttribute('role', 'button');
-    circle.setAttribute('aria-label', `${hobby.name}: ${hobby.value}%`);
+    circle.setAttribute('aria-label', `${label}: ${hobby.value}%`);
 
     // Animate in: start collapsed, grow on intersection
     circle.style.strokeDasharray = `0 ${circumference}`;
@@ -280,10 +305,26 @@ function initDonutChart() {
     legendItem.classList.add('legend-item');
     legendItem.setAttribute('tabindex', '0');
     legendItem.setAttribute('role', 'button');
-    legendItem.setAttribute('aria-label', `${hobby.name}: ${hobby.value}%`);
+    legendItem.setAttribute('aria-label', `${label}: ${hobby.value}%`);
     legendItem.setAttribute('data-index', i);
-    legendItem.innerHTML = `<span class="legend-dot" style="background:${hobby.color}"></span>${hobby.name}`;
+    legendItem.innerHTML = `<span class="legend-dot" style="background:${hobby.color}"></span><span class="legend-text">${label}</span>`;
     legend.appendChild(legendItem);
+  });
+
+  // Refresh chart text when the language changes
+  document.addEventListener('i18n:change', () => {
+    segments.forEach((seg, i) => {
+      const label = nameOf(hobbies[i]);
+      seg.setAttribute('aria-label', `${label}: ${hobbies[i].value}%`);
+    });
+    legend.querySelectorAll('.legend-item').forEach((item, i) => {
+      const label = nameOf(hobbies[i]);
+      item.setAttribute('aria-label', `${label}: ${hobbies[i].value}%`);
+      const text = item.querySelector('.legend-text');
+      if (text) text.textContent = label;
+    });
+    // Reset the center text to the translated default hint
+    clearHighlight();
   });
 
   // --- Event delegation on SVG (avoids per-segment listener leaks) ---

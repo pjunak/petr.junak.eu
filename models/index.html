@@ -4,14 +4,37 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <title>3D Models — Petr Junák</title>
-  <meta name="description" content="3D printable models designed by Petr Junák — Rat Rig V-Core 4 mods, Prusa upgrades, and more.">
-  <meta property="og:title" content="3D Models — Petr Junák">
-  <meta property="og:description" content="Browse 3D printable models designed by Petr Junák for Rat Rig V-Core 4, Prusa, and more.">
+  <title data-i18n="models.meta_title">3D Models — Petr Junák</title>
+  <meta name="description" data-i18n-attr="content:models.meta_description" content="3D printable models designed by Petr Junák — Rat Rig V-Core 4 mods, Prusa upgrades, and more.">
+  <meta property="og:title" data-i18n-attr="content:models.meta_title" content="3D Models — Petr Junák">
+  <meta property="og:description" data-i18n-attr="content:models.meta_description" content="Browse 3D printable models designed by Petr Junák for Rat Rig V-Core 4, Prusa, and more.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://petr.junak.eu/models/">
+  <meta property="og:image" content="https://petr.junak.eu/assets/face.png">
   <meta name="theme-color" content="#F8F7FC" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#0E0E18" media="(prefers-color-scheme: dark)">
+
+  <!-- Early language + theme detection (prevents FOUC for Czech visitors) -->
+  <script>
+    (function () {
+      try {
+        var supported = ['en', 'cs'];
+        var saved = localStorage.getItem('lang');
+        var lang;
+        if (saved && supported.indexOf(saved) !== -1) {
+          lang = saved;
+        } else {
+          var browser = (navigator.language || 'en').toLowerCase().split('-')[0];
+          lang = (browser === 'cs' || browser === 'sk') ? 'cs' : 'en';
+        }
+        document.documentElement.lang = lang;
+
+        var theme = localStorage.getItem('theme');
+        if (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches) theme = 'dark';
+        if (theme) document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) { /* localStorage unavailable — fall back to HTML defaults */ }
+    })();
+  </script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,35 +49,42 @@
 </head>
 <body>
 
+<a href="#main" class="skip-link">Skip to content</a>
+
+<!-- ======== PAGE CONTROLS (always visible) ======== -->
+  <div class="page-controls" role="group" aria-label="Page controls">
+    <button class="lang-toggle" id="langToggle" type="button" aria-label="Switch language">EN</button>
+    <button class="theme-toggle" id="themeToggle" data-i18n-attr="aria-label:nav.theme_toggle" aria-label="Toggle dark mode">
+      <i class="fa-solid fa-moon"></i>
+      <i class="fa-solid fa-sun"></i>
+    </button>
+  </div>
+
 <!-- ======== TOP NAV ======== -->
   <nav class="subpage-nav" aria-label="Page navigation">
-    <a href="../" class="subpage-back"><i class="fa-solid fa-arrow-left"></i> Back to CV</a>
+    <a href="../" class="subpage-back"><i class="fa-solid fa-arrow-left"></i> <span data-i18n="models.back">Back to CV</span></a>
     <div class="subpage-nav-right">
-      <a href="../projects/" class="subpage-sibling-link">Projects <i class="fa-solid fa-arrow-right"></i></a>
-      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
-        <i class="fa-solid fa-moon"></i>
-        <i class="fa-solid fa-sun"></i>
-      </button>
+      <a href="../projects/" class="subpage-sibling-link"><span data-i18n="models.sibling_projects">Projects</span> <i class="fa-solid fa-arrow-right"></i></a>
     </div>
   </nav>
 
   <!-- ======== HEADER ======== -->
-  <header class="subpage-hero section">
+  <header class="subpage-hero section" id="main">
     <div class="container">
       <h1 class="subpage-title reveal">
         <i class="fa-solid fa-cube"></i>
-        3D Models
+        <span data-i18n="models.title">3D Models</span>
       </h1>
-      <p class="subpage-subtitle reveal">
+      <p class="subpage-subtitle reveal" data-i18n="models.subtitle">
         I design and remix 3D printable parts mostly for my own printers — a <strong>Rat Rig V-Core 4</strong> and a <strong>Prusa MK3.5</strong>.
         All models are published on Printables under open licenses.
       </p>
 
       <!-- Filter chips -->
       <div class="filter-bar reveal">
-        <button class="filter-chip active" data-filter="all">All</button>
-        <button class="filter-chip" data-filter="ratrig">Rat Rig V-Core 4</button>
-        <button class="filter-chip" data-filter="prusa">Prusa</button>
+        <button class="filter-chip active" data-filter="all" data-i18n="models.filter_all">All</button>
+        <button class="filter-chip" data-filter="ratrig" data-i18n="models.filter_ratrig">Rat Rig V-Core 4</button>
+        <button class="filter-chip" data-filter="prusa" data-i18n="models.filter_prusa">Prusa</button>
       </div>
     </div>
   </header>
@@ -69,7 +99,7 @@
       <div class="showcase-profile-link reveal">
         <a href="https://www.printables.com/@junakya_320548" target="_blank" rel="noopener" class="profile-cta">
           <i class="fa-solid fa-cube"></i>
-          View all models on Printables
+          <span data-i18n="models.view_all">View all models on Printables</span>
           <i class="fa-solid fa-arrow-up-right-from-square"></i>
         </a>
       </div>
@@ -84,10 +114,11 @@
         <a href="https://github.com/pjunak" class="footer-link" aria-label="GitHub" target="_blank" rel="noopener"><i class="fa-brands fa-github"></i></a>
         <a href="https://linkedin.com/in/petr-junak" class="footer-link" aria-label="LinkedIn" target="_blank" rel="noopener"><i class="fa-brands fa-linkedin-in"></i></a>
       </div>
-      <p class="footer-copy">&copy; 2026 Petr Junák</p>
+      <p class="footer-copy" data-i18n="footer.copy_short">&copy; 2026 Petr Junák</p>
     </div>
   </footer>
 
+  <script src="../js/i18n.js" defer></script>
   <script src="../js/main.js" defer></script>
   <script src="../js/subpage.js" defer></script>
   <script src="../js/models.js" defer></script>

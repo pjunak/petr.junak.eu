@@ -1,0 +1,16 @@
+# Keep the static-site image small and avoid leaking VCS / CI metadata.
+# Drop into the app repo as `.dockerignore`.
+
+.git
+.gitignore
+.github
+.dockerignore
+Dockerfile
+README.md
+LICENSE
+node_modules
+.env
+.env.*
+*.log
+.DS_Store
+Thumbs.db

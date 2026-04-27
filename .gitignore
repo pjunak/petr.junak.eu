@@ -10,7 +10,11 @@ desktop.ini
 *.sublime-project
 *.sublime-workspace
 
-# Secrets & credentials — never commit these
+# Claude Code project notes
+CLAUDE.md
+claude.md
+
+# Secrets & credentials
 .env
 .env.*
 *.key
@@ -31,9 +35,3 @@ __pycache__/
 
 # Misc
 server-requirements.txt
-
-# Claude Code — worktrees are temporary session directories, never commit them.
-# launch.json is intentionally kept (project-level dev server config).
-.claude/worktrees/
-.claude/
-.vscode/

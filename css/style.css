@@ -872,26 +872,6 @@ body::after {
   transform: translateY(-2px);
 }
 
-.footer-download {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: var(--purple);
-  color: #fff;
-  padding: 0.6rem 1.4rem;
-  border-radius: var(--pill-radius);
-  text-decoration: none;
-  font-size: 0.9rem;
-  font-weight: 500;
-  margin-bottom: 1.5rem;
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
-}
-
-.footer-download:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-cta);
-}
-
 .footer-copy {
   font-size: 0.8rem;
   color: var(--body-light);
@@ -1180,6 +1160,34 @@ body::after {
   white-space: nowrap;
 }
 
+/* CTA variant — primary call-to-action (e.g. CV download). Filled purple,
+   white text/icon, slightly larger than the other labeled chips on desktop. */
+.hero-contact-link--cta {
+  background: var(--purple);
+  color: #fff;
+  padding: 0.55rem 1.15rem 0.55rem 0.9rem;
+  font-weight: 600;
+  box-shadow: 0 2px 10px var(--purple-glow);
+}
+
+.hero-contact-link--cta:hover {
+  background: var(--purple-light);
+  color: #fff;
+  box-shadow: var(--shadow-cta);
+}
+
+[data-theme="dark"] .hero-contact-link--cta {
+  background: var(--purple-soft);
+}
+
+[data-theme="dark"] .hero-contact-link--cta:hover {
+  background: var(--purple);
+}
+
+.hero-contact-link--cta .contact-label {
+  font-size: 0.85rem;
+}
+
 /* On mobile, collapse labeled links back to icon-only */
 @media (max-width: 768px) {
   .hero-contact-link--labeled {
@@ -1192,6 +1200,12 @@ body::after {
 
   .contact-label {
     display: none;
+  }
+
+  /* CTA shrinks back to a circle on mobile but keeps its filled colour
+     so the CV download still reads as the primary action. */
+  .hero-contact-link--cta {
+    padding: 0;
   }
 }
 
@@ -1591,8 +1605,7 @@ body::after {
   .subpage-nav,
   .page-controls,
   .skip-link,
-  .hero-skills-strip,
-  .footer-download {
+  .hero-skills-strip {
     display: none !important;
   }
 

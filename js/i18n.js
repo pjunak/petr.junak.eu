@@ -129,9 +129,8 @@
       'footer.copy_short': '© 2026 Petr Junák',
 
       /* CV download */
-      'cv.pdf_path':     'assets/cv-en.pdf',
-      'cv.tooltip':      'Download CV',
-      'cv.footer_label': 'Download CV (PDF)',
+      'cv.pdf_path': 'assets/cv-en.pdf',
+      'cv.tooltip':  'Download CV',
 
       /* Projects page */
       'projects.meta_title':        'Projects — Petr Junák',
@@ -287,9 +286,8 @@
       'footer.copy_short': '© 2026 Petr Junák',
 
       /* CV download */
-      'cv.pdf_path':     'assets/cv-cz.pdf',
-      'cv.tooltip':      'Stáhnout životopis',
-      'cv.footer_label': 'Stáhnout životopis (PDF)',
+      'cv.pdf_path': 'assets/cv-cz.pdf',
+      'cv.tooltip':  'Stáhnout životopis',
 
       /* Projects page */
       'projects.meta_title':        'Projekty — Petr Junák',

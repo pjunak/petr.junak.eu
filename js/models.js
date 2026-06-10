@@ -17,7 +17,7 @@ const MODELS = [
     image: 'https://media.printables.com/media/prints/1084955/images/8230416_fc3fc8ff-311f-49a4-b2a9-76edce64af6d_aa6bca77-50b5-45e4-a706-3f6c67ed17a2/thumbs/inside/640x480/png/2.webp',
     category: 'ratrig',
     tagKey: 'ratrig',
-    stats: { downloads: 18, likes: 87, collections: 35 },
+    stats: { downloads: 91, likes: 18, collections: 18 },
   },
   {
     title: 'Orbitool O2S Mount',
@@ -29,7 +29,7 @@ const MODELS = [
     image: 'https://media.printables.com/media/prints/cfaeb3a2-2dcf-4a47-8d62-86895e490e71/images/10777640_05ce3206-0576-4859-8f00-6825fc5063b2_de3305c4-a84b-4db5-97e2-dfdec202502c/thumbs/inside/640x480/png/screenshot-2025-09-29-165046.webp',
     category: 'ratrig',
     tagKey: 'ratrig',
-    stats: { downloads: 4, likes: 16, collections: 7 },
+    stats: { downloads: 19, likes: 4, collections: 4 },
   },
   {
     title: 'Manta M8P 2.0 Mounting Bracket',
@@ -41,7 +41,7 @@ const MODELS = [
     image: 'https://media.printables.com/media/prints/1223982/images/9176811_9e8dfdbd-dfd0-4815-8b57-00d272dbf257_2eb2d348-6cef-4ab3-8e23-7e6637440f23/thumbs/inside/640x480/png/screenshot-2025-03-10-044823.webp',
     category: 'ratrig',
     tagKey: 'ratrig',
-    stats: { downloads: 4, likes: 13, collections: 3 },
+    stats: { downloads: 13, likes: 4, collections: 1 },
   },
   {
     title: 'Bear Upgrade LED Light Bar (10mm Z rods)',
@@ -53,7 +53,7 @@ const MODELS = [
     image: 'https://media.printables.com/media/prints/552422/images/4435428_e8af6fb9-8c2d-4a68-948f-6de602dd65c8/thumbs/inside/640x480/jpg/pxl_20230813_215412532.webp',
     category: 'prusa',
     tagKey: 'prusa',
-    stats: { downloads: 8, likes: 27, collections: 8 },
+    stats: { downloads: 29, likes: 8, collections: 5 },
   },
 ];
 
@@ -103,12 +103,12 @@ function buildModelCard(model) {
       <h3 class="showcase-card-title">${escapeHtml(model.title)}</h3>
       <p class="showcase-card-desc">${escapeHtml(description)}</p>
       <div class="showcase-card-stats">
-        <span><i class="fa-solid fa-download"></i> ${downloads}</span>
-        <span><i class="fa-solid fa-heart"></i> ${likes}</span>
-        <span><i class="fa-solid fa-layer-group"></i> ${collections} ${escapeHtml(collectionsLabel)}</span>
+        <span><svg class="icon" aria-hidden="true"><use href="/assets/icons.svg#download"/></svg> ${downloads}</span>
+        <span><svg class="icon" aria-hidden="true"><use href="/assets/icons.svg#heart"/></svg> ${likes}</span>
+        <span><svg class="icon" aria-hidden="true"><use href="/assets/icons.svg#layer-group"/></svg> ${collections} ${escapeHtml(collectionsLabel)}</span>
       </div>
     </div>
-    <span class="showcase-card-cta"><span>${escapeHtml(ctaLabel)}</span> <i class="fa-solid fa-arrow-up-right-from-square"></i></span>
+    <span class="showcase-card-cta"><span>${escapeHtml(ctaLabel)}</span> <svg class="icon" aria-hidden="true"><use href="/assets/icons.svg#arrow-up-right-from-square"/></svg></span>
   `;
 
   return card;

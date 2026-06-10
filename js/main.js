@@ -11,6 +11,19 @@ initLanguageBars();
 initDonutChart();
 initExpandableCards();
 initActiveNavHighlight();
+registerServiceWorker();
+
+/* ----------------------------------------
+   Service Worker (offline CV + asset cache)
+   ---------------------------------------- */
+function registerServiceWorker() {
+  if (!('serviceWorker' in navigator)) return;
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {
+      /* registration failure (e.g. file:// or unsupported) is non-fatal */
+    });
+  });
+}
 
 /* ----------------------------------------
    Sticky Navigation
@@ -86,11 +99,21 @@ function initThemeToggle() {
     html.setAttribute('data-theme', 'dark');
   }
 
+  // Keep the browser-chrome color (mobile address bar) in sync with the
+  // chosen theme — the static <meta media="..."> tags only follow the OS
+  // preference, not the user's manual choice.
+  function syncThemeColorMeta() {
+    const color = html.getAttribute('data-theme') === 'dark' ? '#0E0E18' : '#F8F7FC';
+    document.querySelectorAll('meta[name="theme-color"]').forEach((m) => m.setAttribute('content', color));
+  }
+  syncThemeColorMeta();
+
   toggle.addEventListener('click', () => {
     const current = html.getAttribute('data-theme');
     const next = current === 'dark' ? 'light' : 'dark';
     html.setAttribute('data-theme', next);
     localStorage.setItem('theme', next);
+    syncThemeColorMeta();
   });
 }
 
@@ -202,9 +225,10 @@ function initDonutChart() {
   centerText.setAttribute('aria-live', 'polite');
   centerText.innerHTML = `<span class="donut-label">${getDefaultHint()}</span>`;
 
-  // Give the SVG chart a role and label for accessibility
-  svg.setAttribute('role', 'img');
-  svg.setAttribute('aria-label', 'Interactive donut chart showing hobby time distribution');
+  // Give the SVG chart a role and label for accessibility.
+  // role="group" (not "img") — img would make the focusable segments presentational.
+  svg.setAttribute('role', 'group');
+  svg.setAttribute('aria-label', t('hobby.chart_label', 'Hobby time distribution'));
 
   const cx = 100;
   const cy = 100;
@@ -313,6 +337,7 @@ function initDonutChart() {
 
   // Refresh chart text when the language changes
   document.addEventListener('i18n:change', () => {
+    svg.setAttribute('aria-label', t('hobby.chart_label', 'Hobby time distribution'));
     segments.forEach((seg, i) => {
       const label = nameOf(hobbies[i]);
       seg.setAttribute('aria-label', `${label}: ${hobbies[i].value}%`);

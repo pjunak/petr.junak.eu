@@ -4,6 +4,10 @@
 
 FROM nginx:1.27-alpine
 
+# Site config: gzip, cache headers, styled 404. Replaces the stock default.
+# nginx-site.conf must NOT be in .dockerignore or this COPY fails.
+COPY nginx-site.conf /etc/nginx/conf.d/default.conf
+
 # Replace nginx's default site with the repo contents.
 COPY . /usr/share/nginx/html
 
@@ -14,6 +18,7 @@ RUN rm -rf \
     /usr/share/nginx/html/.github \
     /usr/share/nginx/html/Dockerfile \
     /usr/share/nginx/html/.dockerignore \
+    /usr/share/nginx/html/nginx-site.conf \
     /usr/share/nginx/html/README.md \
     2>/dev/null || true
 

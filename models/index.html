@@ -11,6 +11,7 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://petr.junak.eu/models/">
   <meta property="og:image" content="https://petr.junak.eu/assets/face.png">
+  <meta name="twitter:card" content="summary">
   <meta name="theme-color" content="#F8F7FC" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#0E0E18" media="(prefers-color-scheme: dark)">
 
@@ -19,9 +20,12 @@
     (function () {
       try {
         var supported = ['en', 'cs'];
+        var fromUrl = new URLSearchParams(location.search).get('lang');
         var saved = localStorage.getItem('lang');
         var lang;
-        if (saved && supported.indexOf(saved) !== -1) {
+        if (fromUrl && supported.indexOf(fromUrl) !== -1) {
+          lang = fromUrl; // shared/crawled ?lang= links win for this visit
+        } else if (saved && supported.indexOf(saved) !== -1) {
           lang = saved;
         } else {
           var browser = (navigator.language || 'en').toLowerCase().split('-')[0];
@@ -36,35 +40,34 @@
     })();
   </script>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;600;700;800&display=swap">
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/subpage.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
   <link rel="canonical" href="https://petr.junak.eu/models/">
+  <link rel="alternate" hreflang="en" href="https://petr.junak.eu/models/">
+  <link rel="alternate" hreflang="cs" href="https://petr.junak.eu/models/?lang=cs">
+  <link rel="alternate" hreflang="x-default" href="https://petr.junak.eu/models/">
   <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="../manifest.json">
   <meta name="view-transition" content="same-origin">
 </head>
 <body>
 
-<a href="#main" class="skip-link">Skip to content</a>
+<a href="#main" class="skip-link" data-i18n="nav.skip">Skip to content</a>
 
 <!-- ======== PAGE CONTROLS (always visible) ======== -->
-  <div class="page-controls" role="group" aria-label="Page controls">
+  <div class="page-controls" role="group" data-i18n-attr="aria-label:nav.page_controls" aria-label="Page controls">
     <button class="lang-toggle" id="langToggle" type="button" aria-label="Switch language">EN</button>
     <button class="theme-toggle" id="themeToggle" data-i18n-attr="aria-label:nav.theme_toggle" aria-label="Toggle dark mode">
-      <i class="fa-solid fa-moon"></i>
-      <i class="fa-solid fa-sun"></i>
+      <svg class="icon icon-moon" aria-hidden="true"><use href="/assets/icons.svg#moon"/></svg>
+      <svg class="icon icon-sun" aria-hidden="true"><use href="/assets/icons.svg#sun"/></svg>
     </button>
   </div>
 
 <!-- ======== TOP NAV ======== -->
-  <nav class="subpage-nav" aria-label="Page navigation">
-    <a href="../" class="subpage-back"><i class="fa-solid fa-arrow-left"></i> <span data-i18n="models.back">Back to CV</span></a>
+  <nav class="subpage-nav" data-i18n-attr="aria-label:nav.page_nav" aria-label="Page navigation">
+    <a href="../" class="subpage-back"><svg class="icon" aria-hidden="true"><use href="/assets/icons.svg#arrow-left"/></svg> <span data-i18n="models.back">Back to CV</span></a>
     <div class="subpage-nav-right">
-      <a href="../projects/" class="subpage-sibling-link"><span data-i18n="models.sibling_projects">Projects</span> <i class="fa-solid fa-arrow-right"></i></a>
+      <a href="../projects/" class="subpage-sibling-link"><span data-i18n="models.sibling_projects">Projects</span> <svg class="icon" aria-hidden="true"><use href="/assets/icons.svg#arrow-right"/></svg></a>
     </div>
   </nav>
 
@@ -72,7 +75,7 @@
   <header class="subpage-hero section" id="main">
     <div class="container">
       <h1 class="subpage-title reveal">
-        <i class="fa-solid fa-cube"></i>
+        <svg class="icon" aria-hidden="true"><use href="/assets/icons.svg#cube"/></svg>
         <span data-i18n="models.title">3D Models</span>
       </h1>
       <p class="subpage-subtitle reveal" data-i18n="models.subtitle">
@@ -98,9 +101,9 @@
       <!-- Printables profile link -->
       <div class="showcase-profile-link reveal">
         <a href="https://www.printables.com/@junakya_320548" target="_blank" rel="noopener" class="profile-cta">
-          <i class="fa-solid fa-cube"></i>
+          <svg class="icon" aria-hidden="true"><use href="/assets/icons.svg#cube"/></svg>
           <span data-i18n="models.view_all">View all models on Printables</span>
-          <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          <svg class="icon" aria-hidden="true"><use href="/assets/icons.svg#arrow-up-right-from-square"/></svg>
         </a>
       </div>
     </div>
@@ -110,9 +113,9 @@
   <footer class="footer">
     <div class="container">
       <div class="footer-links">
-        <a href="mailto:junakpetr@gmail.com" class="footer-link" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
-        <a href="https://github.com/pjunak" class="footer-link" aria-label="GitHub" target="_blank" rel="noopener"><i class="fa-brands fa-github"></i></a>
-        <a href="https://linkedin.com/in/petr-junak" class="footer-link" aria-label="LinkedIn" target="_blank" rel="noopener"><i class="fa-brands fa-linkedin-in"></i></a>
+        <a href="mailto:junakpetr@gmail.com" class="footer-link" data-i18n-attr="aria-label:hero.tip_email" aria-label="Email"><svg class="icon" aria-hidden="true"><use href="/assets/icons.svg#envelope"/></svg></a>
+        <a href="https://github.com/pjunak" class="footer-link" aria-label="GitHub" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="/assets/icons.svg#github"/></svg></a>
+        <a href="https://linkedin.com/in/petr-junak" class="footer-link" aria-label="LinkedIn" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="/assets/icons.svg#linkedin-in"/></svg></a>
       </div>
       <p class="footer-copy" data-i18n="footer.copy_short">&copy; 2026 Petr Junák</p>
     </div>
@@ -122,5 +125,6 @@
   <script src="../js/main.js" defer></script>
   <script src="../js/subpage.js" defer></script>
   <script src="../js/models.js" defer></script>
+  <script src="../js/palette.js" defer></script>
 </body>
 </html>

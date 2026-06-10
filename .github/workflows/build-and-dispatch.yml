@@ -6,6 +6,15 @@ name: Build and dispatch
 # :latest and :sha-<commit> tags, then fires a repository_dispatch event
 # at the infrastructure repo to trigger a deploy.
 #
+# Also runs on:
+#   - repository_dispatch "cv-updated" — fired by pjunak/cv when new CV PDFs
+#     are published, so the site picks them up immediately.
+#   - a weekly schedule — fallback so fresh CV PDFs land even if the
+#     dispatch from pjunak/cv isn't configured.
+# The build fetches cv-en.pdf / cv-cz.pdf from pjunak/cv's rolling "latest"
+# release before the image is built; the committed copies in assets/ are a
+# local-dev fallback only.
+#
 # Required configuration in the app repo (Settings → Secrets and variables → Actions):
 #   Secret   INFRA_DISPATCH_TOKEN   fine-grained PAT for the infra repo
 #   Variable INFRA_REPO             owner/infra-repo (e.g. pjunak/junak.eu)
@@ -15,6 +24,10 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  repository_dispatch:
+    types: [cv-updated]
+  schedule:
+    - cron: '0 4 * * 1'   # Mondays 04:00 UTC — weekly CV refresh fallback
 
 permissions:
   contents: read
@@ -30,6 +43,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+
+      - name: Fetch current CV PDFs from pjunak/cv
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 -o assets/cv-en.pdf https://github.com/pjunak/cv/releases/latest/download/cv-en.pdf
+          curl -fsSL --retry 3 -o assets/cv-cz.pdf https://github.com/pjunak/cv/releases/latest/download/cv-cz.pdf
+          ls -l assets/cv-en.pdf assets/cv-cz.pdf
 
       - uses: docker/setup-buildx-action@v3
 

@@ -38,6 +38,10 @@
       'nav.theme_toggle':     'Toggle dark mode',
       'nav.lang_switch_cs':   'Přepnout do češtiny',
       'nav.lang_switch_en':   'Switch to English',
+      'nav.skip':             'Skip to content',
+      'nav.page_controls':    'Page controls',
+      'nav.quick_nav':        'Quick navigation',
+      'nav.page_nav':         'Page navigation',
 
       /* Hero */
       'hero.available':       'Available for new opportunities',
@@ -114,6 +118,7 @@
       'hobby.poetry':             'Reading & writing poetry',
       'hobby.hint_hover':         'Hover a segment',
       'hobby.hint_tap':           'Tap a segment',
+      'hobby.chart_label':        'Hobby time distribution',
 
       /* Explore More */
       'explore.title':           'Explore More',
@@ -131,6 +136,11 @@
       /* CV download */
       'cv.pdf_path': 'assets/cv-en.pdf',
       'cv.tooltip':  'Download CV',
+
+      /* Command palette */
+      'palette.aria':        'Command palette',
+      'palette.placeholder': 'Type a command…',
+      'palette.no_results':  'No matching commands',
 
       /* Projects page */
       'projects.meta_title':        'Projects — Petr Junák',
@@ -195,6 +205,10 @@
       'nav.theme_toggle':     'Přepnout tmavý režim',
       'nav.lang_switch_cs':   'Přepnout do češtiny',
       'nav.lang_switch_en':   'Switch to English',
+      'nav.skip':             'Přeskočit na obsah',
+      'nav.page_controls':    'Ovládání stránky',
+      'nav.quick_nav':        'Rychlá navigace',
+      'nav.page_nav':         'Navigace stránky',
 
       /* Hero */
       'hero.available':       'Otevřen novým příležitostem',
@@ -271,6 +285,7 @@
       'hobby.poetry':             'Čtení a psaní poezie',
       'hobby.hint_hover':         'Najeďte na výseč',
       'hobby.hint_tap':           'Klepněte na výseč',
+      'hobby.chart_label':        'Rozložení času mezi záliby',
 
       /* Explore More */
       'explore.title':           'Prozkoumat více',
@@ -288,6 +303,11 @@
       /* CV download */
       'cv.pdf_path': 'assets/cv-cz.pdf',
       'cv.tooltip':  'Stáhnout životopis',
+
+      /* Command palette */
+      'palette.aria':        'Paleta příkazů',
+      'palette.placeholder': 'Zadejte příkaz…',
+      'palette.no_results':  'Žádné odpovídající příkazy',
 
       /* Projects page */
       'projects.meta_title':        'Projekty — Petr Junák',
@@ -335,11 +355,29 @@
   };
 
   function detectLanguage() {
+    // ?lang= (shared / crawled links) wins for this visit — mirrors the early
+    // inline <head> script so the pre-paint choice and the dictionary agree.
+    const fromUrl = new URLSearchParams(location.search).get('lang');
+    if (fromUrl && SUPPORTED.includes(fromUrl)) return fromUrl;
+
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved && SUPPORTED.includes(saved)) return saved;
 
     const browser = (navigator.language || 'en').toLowerCase().split('-')[0];
     return CZECH_FAMILY.includes(browser) ? 'cs' : 'en';
+  }
+
+  /**
+   * Keep <link rel="canonical"> self-referential per language variant:
+   * /?lang=cs canonicalizes to itself, every other state to the bare URL.
+   * Needed so search engines index the Czech variant instead of folding it.
+   */
+  function syncCanonical(lang) {
+    const canonical = document.querySelector('link[rel="canonical"]');
+    if (!canonical) return;
+    const base = canonical.href.split('?')[0];
+    const fromUrl = new URLSearchParams(location.search).get('lang');
+    canonical.href = (lang === 'cs' && fromUrl === 'cs') ? base + '?lang=cs' : base;
   }
 
   function getDict(lang) {
@@ -399,6 +437,7 @@
     if (!SUPPORTED.includes(lang)) lang = 'en';
     currentLang = lang;
     applyTranslations(lang);
+    syncCanonical(lang);
 
     document.querySelectorAll('.lang-toggle').forEach((btn) => updateToggle(btn, lang));
 
@@ -410,6 +449,7 @@
   // Apply translations immediately if the DOM is already parsed
   function init() {
     applyTranslations(currentLang);
+    syncCanonical(currentLang);
 
     document.querySelectorAll('.lang-toggle').forEach((btn) => {
       updateToggle(btn, currentLang);

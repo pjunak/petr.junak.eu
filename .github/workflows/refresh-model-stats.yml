@@ -1,0 +1,39 @@
+name: Refresh Printables model stats
+
+# Weekly: pull current download/like/collection counts from the public
+# Printables GraphQL API into js/models.js and commit the diff.
+#
+# Scheduling note: runs Mondays 03:30 UTC, half an hour BEFORE the weekly
+# build in build-and-dispatch.yml (04:00 UTC). Pushes made with the stock
+# GITHUB_TOKEN do not trigger other workflows, so it is that scheduled
+# build that deploys the refreshed numbers.
+
+on:
+  schedule:
+    - cron: '30 3 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    name: Update js/models.js stats
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Refresh stats from Printables API
+        run: node scripts/update-model-stats.mjs
+
+      - name: Commit if changed
+        run: |
+          if git diff --quiet js/models.js; then
+            echo "Stats unchanged — nothing to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add js/models.js
+          git commit -m "Refresh Printables model stats"
+          git push

@@ -156,12 +156,12 @@ const API_URL = `https://api.github.com/users/${GITHUB_USER}/repos?per_page=100&
 const REPO_CACHE_KEY = 'gh_repos_cache_v1';
 const REPO_CACHE_TTL = 60 * 60 * 1000; // 1 hour
 
-function readCachedRepos() {
+function readCachedRepos(maxAge = REPO_CACHE_TTL) {
   try {
     const raw = localStorage.getItem(REPO_CACHE_KEY);
     if (!raw) return null;
     const { repos, savedAt } = JSON.parse(raw);
-    if (!repos || !savedAt || Date.now() - savedAt > REPO_CACHE_TTL) return null;
+    if (!repos || !savedAt || Date.now() - savedAt > maxAge) return null;
     return repos;
   } catch (e) { return null; }
 }
@@ -206,20 +206,20 @@ function buildCard(repo, config) {
   const tagHtml = `<span class="showcase-tag ${tagMeta.className}" data-i18n="${tagMeta.i18nKey}">${escapeHtml(tagLabel)}</span>`;
 
   const langHtml = langName
-    ? `<span class="showcase-lang"><i class="fa-solid fa-circle" style="color:${langColor}"></i> ${escapeHtml(langName)}</span>`
+    ? `<span class="showcase-lang"><svg class="icon" aria-hidden="true" style="color:${langColor}"><use href="/assets/icons.svg#circle"/></svg> ${escapeHtml(langName)}</span>`
     : '';
 
   // Stats line
   const stats = [];
   if (repo.stargazers_count > 0) {
-    stats.push(`<span><i class="fa-solid fa-star"></i> ${repo.stargazers_count}</span>`);
+    stats.push(`<span><svg class="icon" aria-hidden="true"><use href="/assets/icons.svg#star"/></svg> ${repo.stargazers_count}</span>`);
   }
   if (repo.fork && repo.source) {
-    stats.push(`<span><i class="fa-solid fa-code-fork"></i> ${escapeHtml(translate('projects.fork_of', 'Fork of'))} ${escapeHtml(repo.source.full_name)}</span>`);
+    stats.push(`<span><svg class="icon" aria-hidden="true"><use href="/assets/icons.svg#code-fork"/></svg> ${escapeHtml(translate('projects.fork_of', 'Fork of'))} ${escapeHtml(repo.source.full_name)}</span>`);
   } else if (repo.fork) {
-    stats.push(`<span><i class="fa-solid fa-code-fork"></i> ${escapeHtml(translate('projects.fork', 'Fork'))}</span>`);
+    stats.push(`<span><svg class="icon" aria-hidden="true"><use href="/assets/icons.svg#code-fork"/></svg> ${escapeHtml(translate('projects.fork', 'Fork'))}</span>`);
   }
-  stats.push(`<span><i class="fa-brands fa-github"></i> ${escapeHtml(repo.full_name)}</span>`);
+  stats.push(`<span><svg class="icon" aria-hidden="true"><use href="/assets/icons.svg#github"/></svg> ${escapeHtml(repo.full_name)}</span>`);
 
   const description = resolveDesc(config, repo);
   const ctaLabel = translate('projects.cta_view_github', 'View on GitHub');
@@ -236,7 +236,7 @@ function buildCard(repo, config) {
         ${stats.join('\n        ')}
       </div>
     </div>
-    <span class="showcase-card-cta"><span>${escapeHtml(ctaLabel)}</span> <i class="fa-solid fa-arrow-up-right-from-square"></i></span>
+    <span class="showcase-card-cta"><span>${escapeHtml(ctaLabel)}</span> <svg class="icon" aria-hidden="true"><use href="/assets/icons.svg#arrow-up-right-from-square"/></svg></span>
   `;
 
   return card;
@@ -306,14 +306,16 @@ async function initProjects() {
   const grid = document.getElementById('projectsGrid');
   if (!grid) return;
 
-  // If we have a recent cache, paint from it immediately — the fetch refreshes it in the background
+  // If we have a fresh cache (< 1 h), render from it and skip the API call
+  // entirely — that's what actually protects the 60 req/h unauthenticated
+  // rate limit. Expired caches return null and fall through to the fetch.
   const cached = readCachedRepos();
   if (cached) {
     CACHED_CARDS = buildSortedCards(cached);
     renderCards(grid, CACHED_CARDS);
-  } else {
-    showSkeleton(grid, 6);
+    return;
   }
+  showSkeleton(grid, 6);
 
   try {
     const response = await fetch(API_URL);
@@ -325,8 +327,14 @@ async function initProjects() {
     renderCards(grid, CACHED_CARDS);
   } catch (err) {
     console.warn('GitHub API fetch failed:', err);
-    // Keep whatever cached view we rendered; only show the fallback if we had nothing
-    if (!cached) showFallback(grid);
+    // Degrade gracefully: an expired cache beats an error card
+    const stale = readCachedRepos(Infinity);
+    if (stale) {
+      CACHED_CARDS = buildSortedCards(stale);
+      renderCards(grid, CACHED_CARDS);
+    } else {
+      showFallback(grid);
+    }
   }
 }
 

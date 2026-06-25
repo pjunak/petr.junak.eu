@@ -17,7 +17,7 @@ const MODELS = [
     image: 'https://media.printables.com/media/prints/1084955/images/8230416_fc3fc8ff-311f-49a4-b2a9-76edce64af6d_aa6bca77-50b5-45e4-a706-3f6c67ed17a2/thumbs/inside/640x480/png/2.webp',
     category: 'ratrig',
     tagKey: 'ratrig',
-    stats: { downloads: 91, likes: 18, collections: 18 },
+    stats: { downloads: 92, likes: 18, collections: 18 },
   },
   {
     title: 'Orbitool O2S Mount',
@@ -29,7 +29,7 @@ const MODELS = [
     image: 'https://media.printables.com/media/prints/cfaeb3a2-2dcf-4a47-8d62-86895e490e71/images/10777640_05ce3206-0576-4859-8f00-6825fc5063b2_de3305c4-a84b-4db5-97e2-dfdec202502c/thumbs/inside/640x480/png/screenshot-2025-09-29-165046.webp',
     category: 'ratrig',
     tagKey: 'ratrig',
-    stats: { downloads: 19, likes: 4, collections: 4 },
+    stats: { downloads: 21, likes: 4, collections: 4 },
   },
   {
     title: 'Manta M8P 2.0 Mounting Bracket',

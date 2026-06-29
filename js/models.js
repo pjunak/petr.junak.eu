@@ -17,7 +17,7 @@ const MODELS = [
     image: 'https://media.printables.com/media/prints/1084955/images/8230416_fc3fc8ff-311f-49a4-b2a9-76edce64af6d_aa6bca77-50b5-45e4-a706-3f6c67ed17a2/thumbs/inside/640x480/png/2.webp',
     category: 'ratrig',
     tagKey: 'ratrig',
-    stats: { downloads: 92, likes: 18, collections: 18 },
+    stats: { downloads: 93, likes: 18, collections: 18 },
   },
   {
     title: 'Orbitool O2S Mount',

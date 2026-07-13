@@ -29,7 +29,7 @@ const MODELS = [
     image: 'https://media.printables.com/media/prints/cfaeb3a2-2dcf-4a47-8d62-86895e490e71/images/10777640_05ce3206-0576-4859-8f00-6825fc5063b2_de3305c4-a84b-4db5-97e2-dfdec202502c/thumbs/inside/640x480/png/screenshot-2025-09-29-165046.webp',
     category: 'ratrig',
     tagKey: 'ratrig',
-    stats: { downloads: 21, likes: 4, collections: 4 },
+    stats: { downloads: 22, likes: 4, collections: 4 },
   },
   {
     title: 'Manta M8P 2.0 Mounting Bracket',

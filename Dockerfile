@@ -2,7 +2,7 @@
 # Suitable for plain HTML/CSS/JS sites with no build step. For sites with a
 # build step (Vite, Astro, etc.), replace with a multi-stage build.
 
-FROM nginx:1.27-alpine
+FROM nginx:1.30.4-alpine
 
 # Site config: gzip, cache headers, styled 404. Replaces the stock default.
 # nginx-site.conf must NOT be in .dockerignore or this COPY fails.

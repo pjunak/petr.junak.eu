@@ -21,7 +21,7 @@ jobs:
     name: Update js/models.js stats
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - name: Refresh stats from Printables API
         run: node scripts/update-model-stats.mjs

@@ -144,5 +144,5 @@ scripts/update-model-stats.mjs
   change.
 
 Do not commit secrets, local editor/agent state, or generated runtime files.
-Do not commit, push, deploy, publish, or alter workflow permissions unless
-explicitly requested.
+The global Codex instructions govern task commits. Never push, deploy, publish,
+or alter workflow permissions unless explicitly requested.

@@ -6,13 +6,8 @@ desktop.ini
 # Editor / IDE settings
 .vscode/
 .idea/
-.claude/
 *.sublime-project
 *.sublime-workspace
-
-# Claude Code project notes
-CLAUDE.md
-claude.md
 
 # Secrets & credentials
 .env

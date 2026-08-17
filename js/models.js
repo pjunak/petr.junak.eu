@@ -53,7 +53,7 @@ const MODELS = [
     image: 'https://media.printables.com/media/prints/552422/images/4435428_e8af6fb9-8c2d-4a68-948f-6de602dd65c8/thumbs/inside/640x480/jpg/pxl_20230813_215412532.webp',
     category: 'prusa',
     tagKey: 'prusa',
-    stats: { downloads: 30, likes: 8, collections: 5 },
+    stats: { downloads: 31, likes: 8, collections: 5 },
   },
 ];
 

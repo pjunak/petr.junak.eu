@@ -132,6 +132,15 @@ scripts/update-model-stats.mjs
 
 ## Completion
 
+For prose or agent-guidance-only changes, review the diff, check local links,
+and verify changed commands or contract claims. Runtime builds and operational
+acceptance are required only for the affected behavior below. Reuse successful
+checks on unchanged inputs; preserve complete CI and release gates.
+
+For a page-local change, inspect that page and its changed interactions in both
+languages and relevant layouts. Use the full matrix below for shared styling,
+i18n, navigation, caching, asset delivery or release changes:
+
 - Serve the site and visit the home, projects, models, and 404 pages.
 - Verify EN/CZ, light/dark, keyboard navigation, and mobile/desktop layout.
 - Check the browser console and network panel for errors and unintended

@@ -24,6 +24,19 @@ The downloadable CVs are **built from LaTeX in [pjunak/cv](https://github.com/pj
 Every push there compiles both languages and publishes them to that repo's `latest` release;
 this site's CI downloads them at image-build time, so the website always serves the current CV.
 
+## Verification and deployment
+
+Pull requests check every JavaScript file, build the nginx image, validate its
+configuration, and verify the home/projects/models pages, both CV downloads,
+and the 404 response. Main-branch builds publish the same verified BuildKit
+result and dispatch its immutable digest to the infrastructure repository.
+Manual and weekly builds use the same gates. The digest also identifies builds
+that use newer CV PDFs without a change to this repository's source revision.
+
+Container checks require Docker; source syntax checks alone do not establish
+nginx or container behavior. Browser interaction and visual checks remain
+separate from this smoke suite.
+
 ## Licensing
 
 © 2026 Petr Junák. All rights reserved.

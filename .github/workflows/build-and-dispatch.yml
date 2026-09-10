@@ -23,6 +23,7 @@ name: Build and dispatch
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
   repository_dispatch:
     types: [cv-updated]
@@ -31,7 +32,6 @@ on:
 
 permissions:
   contents: read
-  packages: write
 
 concurrency:
   group: build-${{ github.ref }}
@@ -39,21 +39,41 @@ concurrency:
 
 jobs:
   build:
-    name: Build and push image
+    name: Verify and build image
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image_ref: ${{ steps.publish.outputs.digest && format('{0}@{1}', steps.img.outputs.name, steps.publish.outputs.digest) || '' }}
     steps:
       - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '26'
+
+      - name: Syntax-check every site script
+        run: |
+          for script in js/*.js scripts/*.mjs sw.js; do
+            node --check "$script"
+          done
 
       - name: Fetch current CV PDFs from pjunak/cv
         run: |
           set -euo pipefail
-          curl -fsSL --retry 3 -o assets/cv-en.pdf https://github.com/pjunak/cv/releases/latest/download/cv-en.pdf
-          curl -fsSL --retry 3 -o assets/cv-cz.pdf https://github.com/pjunak/cv/releases/latest/download/cv-cz.pdf
+          curl -fsSL --connect-timeout 10 --max-time 60 --retry 3 --retry-max-time 180 -o assets/cv-en.pdf https://github.com/pjunak/cv/releases/latest/download/cv-en.pdf
+          curl -fsSL --connect-timeout 10 --max-time 60 --retry 3 --retry-max-time 180 -o assets/cv-cz.pdf https://github.com/pjunak/cv/releases/latest/download/cv-cz.pdf
+          for pdf in assets/cv-en.pdf assets/cv-cz.pdf; do
+            [[ "$(head -c 5 "$pdf")" == '%PDF-' ]] || { echo "::error::Invalid PDF: $pdf"; exit 1; }
+          done
           ls -l assets/cv-en.pdf assets/cv-cz.pdf
 
       - uses: docker/setup-buildx-action@v4
 
       - name: Log in to GHCR
+        if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
         uses: docker/login-action@v4
         with:
           registry: ghcr.io
@@ -66,21 +86,52 @@ jobs:
           REPO: ${{ github.repository }}
         run: echo "name=ghcr.io/${REPO,,}" >> "$GITHUB_OUTPUT"
 
-      - name: Build and push
+      - name: Build the image for verification
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          load: true
+          tags: portfolio:test
+          labels: org.opencontainers.image.revision=${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max,ignore-error=true
+
+      - name: Verify nginx and served pages in the release image
+        run: |
+          set -euo pipefail
+          docker run --rm portfolio:test nginx -t
+          container_id=$(docker run --detach --publish 18080:80 portfolio:test)
+          trap 'docker logs "$container_id"; docker rm --force "$container_id"' EXIT
+          for attempt in {1..30}; do
+            if curl --fail --silent --max-time 2 http://127.0.0.1:18080/ >/dev/null; then break; fi
+            if [[ "$attempt" == 30 ]]; then exit 1; fi
+            sleep 1
+          done
+          for page in / /projects/ /models/ /assets/cv-en.pdf /assets/cv-cz.pdf; do
+            curl --fail --silent --show-error --max-time 10 "http://127.0.0.1:18080${page}" >/dev/null
+          done
+          code=$(curl --silent --show-error --max-time 10 --output /dev/null --write-out '%{http_code}' http://127.0.0.1:18080/missing-ci-page)
+          [[ "$code" == 404 ]]
+
+      - name: Publish the verified warm build
+        id: publish
+        if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
         uses: docker/build-push-action@v7
         with:
           context: .
           push: true
+          labels: org.opencontainers.image.revision=${{ github.sha }}
           tags: |
             ${{ steps.img.outputs.name }}:latest
             ${{ steps.img.outputs.name }}:sha-${{ github.sha }}
           cache-from: type=gha
-          cache-to: type=gha,mode=max
 
   dispatch:
     name: Dispatch deploy to infra repo
     needs: build
+    if: ${{ needs.build.outputs.image_ref != '' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - name: Verify dispatch config
         env:
@@ -102,5 +153,6 @@ jobs:
           client-payload: |-
             {
               "service": "${{ vars.INFRA_SERVICE }}",
-              "sha": "${{ github.sha }}"
+              "sha": "${{ github.sha }}",
+              "image_ref": "${{ needs.build.outputs.image_ref }}"
             }

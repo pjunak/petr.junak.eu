@@ -121,7 +121,8 @@ scripts/update-model-stats.mjs
   repository's rolling release before building; committed PDFs are local
   fallbacks.
 - The workflow publishes `latest` and `sha-<commit>` images to GHCR, then
-  dispatches the sibling `junak.eu` infrastructure repository.
+  dispatches the immutable image digest to the sibling `junak.eu`
+  infrastructure repository after nginx and HTTP smoke checks pass.
 - This repository never SSHes to production.
 - Preserve nginx's gzip, cache, `nosniff`, and custom-404 behavior.
 - Changes to `Dockerfile`, `nginx-site.conf`, or deployment workflows require

@@ -7,18 +7,17 @@ name: Build and dispatch
 # at the infrastructure repo to trigger a deploy.
 #
 # Also runs on:
-#   - repository_dispatch "cv-updated" — fired by pjunak/cv when new CV PDFs
+#   - repository_dispatch "cv-updated" â€” fired by pjunak/cv when new CV PDFs
 #     are published, so the site picks them up immediately.
-#   - a weekly schedule — fallback so fresh CV PDFs land even if the
+#   - a weekly schedule â€” fallback so fresh CV PDFs land even if the
 #     dispatch from pjunak/cv isn't configured.
 # The build fetches cv-en.pdf / cv-cz.pdf from pjunak/cv's rolling "latest"
 # release before the image is built; the committed copies in assets/ are a
 # local-dev fallback only.
 #
-# Required configuration in the app repo (Settings → Secrets and variables → Actions):
+# Required configuration in the app repo (Settings â†’ Secrets and variables â†’ Actions):
 #   Secret   INFRA_DISPATCH_TOKEN   fine-grained PAT for the infra repo
-#   Variable INFRA_REPO             owner/infra-repo (e.g. pjunak/junak.eu)
-#   Variable INFRA_SERVICE          stack directory name (e.g. tiamat)
+#   Variable INFRA_REPO             owner/infra-repo (e.g. pjunak/infra)
 
 on:
   push:
@@ -28,14 +27,15 @@ on:
   repository_dispatch:
     types: [cv-updated]
   schedule:
-    - cron: '0 4 * * 1'   # Mondays 04:00 UTC — weekly CV refresh fallback
+    - cron: '0 4 * * 1'   # Mondays 04:00 UTC â€” weekly CV refresh fallback
 
 permissions:
   contents: read
 
 concurrency:
-  group: build-${{ github.ref }}
-  cancel-in-progress: true
+  group: portfolio-${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && 'production' || github.ref }}
+  cancel-in-progress: false
+  queue: max
 
 jobs:
   build:
@@ -113,9 +113,25 @@ jobs:
           code=$(curl --silent --show-error --max-time 10 --output /dev/null --write-out '%{http_code}' http://127.0.0.1:18080/missing-ci-page)
           [[ "$code" == 404 ]]
 
+      - name: Skip superseded main revisions
+        id: current
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          main_sha="$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha)"
+          [[ "$main_sha" =~ ^[a-f0-9]{40}$ ]]
+          if [[ "$main_sha" == "$GITHUB_SHA" ]]; then
+            echo 'current=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'current=false' >> "$GITHUB_OUTPUT"
+            echo '::notice::A newer main revision exists; publication and deployment skipped.'
+          fi
+
       - name: Publish the verified warm build
         id: publish
-        if: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
+        if: steps.current.outputs.current == 'true'
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -126,33 +142,45 @@ jobs:
             ${{ steps.img.outputs.name }}:sha-${{ github.sha }}
           cache-from: type=gha
 
-  dispatch:
-    name: Dispatch deploy to infra repo
-    needs: build
-    if: ${{ needs.build.outputs.image_ref != '' }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - name: Verify dispatch config
+      - name: Retain published release metadata
+        if: steps.current.outputs.current == 'true'
         env:
-          TOKEN: ${{ secrets.INFRA_DISPATCH_TOKEN }}
-          REPO: ${{ vars.INFRA_REPO }}
-          SERVICE: ${{ vars.INFRA_SERVICE }}
+          IMAGE_REF: ${{ format('{0}@{1}', steps.img.outputs.name, steps.publish.outputs.digest) }}
         run: |
           set -euo pipefail
-          : "${TOKEN:?INFRA_DISPATCH_TOKEN secret is not set}"
-          : "${REPO:?INFRA_REPO variable is not set (e.g. owner/infra-repo)}"
-          : "${SERVICE:?INFRA_SERVICE variable is not set (e.g. tiamat)}"
-
-      - name: Trigger infra deploy
-        uses: peter-evans/repository-dispatch@v4
+          [[ "$IMAGE_REF" =~ ^ghcr\.io/[a-z0-9._/-]+@sha256:[0-9a-f]{64}$ ]]
+          mkdir -p release
+          jq -n --arg repository "$GITHUB_REPOSITORY" --arg sha "$GITHUB_SHA" --arg image "$IMAGE_REF" \
+            '{format: 1, repository: $repository, sha: $sha, image_ref: $image}' > release/published-image.json
+      - uses: actions/upload-artifact@v4
+        if: steps.current.outputs.current == 'true'
         with:
-          token: ${{ secrets.INFRA_DISPATCH_TOKEN }}
+          name: published-image
+          path: release/published-image.json
+          if-no-files-found: error
+          retention-days: 30
+
+  deploy:
+    name: Deploy and verify petr
+    needs: build
+    if: needs.build.outputs.image_ref != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v7
+        with:
           repository: ${{ vars.INFRA_REPO }}
-          event-type: deploy
-          client-payload: |-
-            {
-              "service": "${{ vars.INFRA_SERVICE }}",
-              "sha": "${{ github.sha }}",
-              "image_ref": "${{ needs.build.outputs.image_ref }}"
-            }
+          token: ${{ secrets.INFRA_DISPATCH_TOKEN }}
+          ref: d3c0603834b4d15a4a52e3b1b2b1cfdd1ab45578
+          persist-credentials: false
+          sparse-checkout: scripts/application-release.py
+          sparse-checkout-cone-mode: false
+      - name: Dispatch and wait for infrastructure health
+        run: python3 scripts/application-release.py deploy
+        env:
+          APP_REPOSITORY: ${{ github.repository }}
+          GH_TOKEN: ${{ secrets.INFRA_DISPATCH_TOKEN }}
+          INFRA_REPO: ${{ vars.INFRA_REPO }}
+          DEPLOY_SERVICE: petr
+          DEPLOY_SHA: ${{ github.sha }}
+          DEPLOY_IMAGE: ${{ needs.build.outputs.image_ref }}

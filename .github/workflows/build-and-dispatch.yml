@@ -7,15 +7,15 @@ name: Build and dispatch
 # at the infrastructure repo to trigger a deploy.
 #
 # Also runs on:
-#   - repository_dispatch "cv-updated" â€” fired by pjunak/cv when new CV PDFs
+#   - repository_dispatch "cv-updated" - fired by pjunak/cv when new CV PDFs
 #     are published, so the site picks them up immediately.
-#   - a weekly schedule â€” fallback so fresh CV PDFs land even if the
+#   - a weekly schedule - fallback so fresh CV PDFs land even if the
 #     dispatch from pjunak/cv isn't configured.
 # The build fetches cv-en.pdf / cv-cz.pdf from pjunak/cv's rolling "latest"
 # release before the image is built; the committed copies in assets/ are a
 # local-dev fallback only.
 #
-# Required configuration in the app repo (Settings â†’ Secrets and variables â†’ Actions):
+# Required configuration in the app repo (Settings -> Secrets and variables -> Actions):
 #   Secret   INFRA_DISPATCH_TOKEN   fine-grained PAT for the infra repo
 #   Variable INFRA_REPO             owner/infra-repo (e.g. pjunak/infra)
 
@@ -27,7 +27,7 @@ on:
   repository_dispatch:
     types: [cv-updated]
   schedule:
-    - cron: '0 4 * * 1'   # Mondays 04:00 UTC â€” weekly CV refresh fallback
+    - cron: '0 4 * * 1'   # Mondays 04:00 UTC - weekly CV refresh fallback
 
 permissions:
   contents: read
@@ -171,7 +171,7 @@ jobs:
         with:
           repository: ${{ vars.INFRA_REPO }}
           token: ${{ secrets.INFRA_DISPATCH_TOKEN }}
-          ref: d3c0603834b4d15a4a52e3b1b2b1cfdd1ab45578
+          ref: 4f8db1dd266eda21b9f9044f86b53fbb0a07061c
           persist-credentials: false
           sparse-checkout: scripts/application-release.py
           sparse-checkout-cone-mode: false

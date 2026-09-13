@@ -47,8 +47,8 @@ Current main changes and CV refreshes publish the verified image, then wait for
 the infrastructure rollout to finish. Production runs are queued; superseded
 sources skip publication. Pull requests verify without publishing or deploying.
 
-Set `INFRA_REPO=pjunak/infra` and `INFRA_DISPATCH_TOKEN` with Contents read/write
-and Actions read on infra. The workflow targets `petr` directly; `INFRA_SERVICE`
+Set `INFRA_REPO=pjunak/infra` and `INFRA_DISPATCH_TOKEN` with Contents read
+and Actions write on infra. The workflow targets `petr` directly; `INFRA_SERVICE`
 is obsolete. It uses the pinned shared infrastructure client, and no server SSH
 credential is stored here.
 

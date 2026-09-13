@@ -1,33 +1,17 @@
 name: Build and dispatch
 
-# Drop into an app repo's .github/workflows/ directory.
-#
-# On every push to main: builds a Docker image, pushes to GHCR with both
-# :latest and :sha-<commit> tags, then fires a repository_dispatch event
-# at the infrastructure repo to trigger a deploy.
-#
-# Also runs on:
-#   - repository_dispatch "cv-updated" - fired by pjunak/cv when new CV PDFs
-#     are published, so the site picks them up immediately.
-#   - a weekly schedule - fallback so fresh CV PDFs land even if the
-#     dispatch from pjunak/cv isn't configured.
-# The build fetches cv-en.pdf / cv-cz.pdf from pjunak/cv's rolling "latest"
-# release before the image is built; the committed copies in assets/ are a
-# local-dev fallback only.
-#
-# Required configuration in the app repo (Settings -> Secrets and variables -> Actions):
-#   Secret   INFRA_DISPATCH_TOKEN   fine-grained PAT for the infra repo
-#   Variable INFRA_REPO             owner/infra-repo (e.g. pjunak/infra)
+# Main publishes a verified image and waits for infra deployment.
+# Weekly builds publish refreshed Printables statistics. CV PDFs are built
+# independently by pjunak/cv and linked directly from the website.
+# Required: INFRA_REPO and the shared INFRA_DISPATCH_TOKEN.
 
 on:
   push:
     branches: [main]
   pull_request:
   workflow_dispatch:
-  repository_dispatch:
-    types: [cv-updated]
   schedule:
-    - cron: '0 4 * * 1'   # Mondays 04:00 UTC - weekly CV refresh fallback
+    - cron: '0 4 * * 1'   # Mondays 04:00 UTC - publish refreshed Printables statistics
 
 permissions:
   contents: read
@@ -59,16 +43,6 @@ jobs:
           for script in js/*.js scripts/*.mjs sw.js; do
             node --check "$script"
           done
-
-      - name: Fetch current CV PDFs from pjunak/cv
-        run: |
-          set -euo pipefail
-          curl -fsSL --connect-timeout 10 --max-time 60 --retry 3 --retry-max-time 180 -o assets/cv-en.pdf https://github.com/pjunak/cv/releases/latest/download/cv-en.pdf
-          curl -fsSL --connect-timeout 10 --max-time 60 --retry 3 --retry-max-time 180 -o assets/cv-cz.pdf https://github.com/pjunak/cv/releases/latest/download/cv-cz.pdf
-          for pdf in assets/cv-en.pdf assets/cv-cz.pdf; do
-            [[ "$(head -c 5 "$pdf")" == '%PDF-' ]] || { echo "::error::Invalid PDF: $pdf"; exit 1; }
-          done
-          ls -l assets/cv-en.pdf assets/cv-cz.pdf
 
       - uses: docker/setup-buildx-action@v4
 
@@ -107,8 +81,13 @@ jobs:
             if [[ "$attempt" == 30 ]]; then exit 1; fi
             sleep 1
           done
-          for page in / /projects/ /models/ /assets/cv-en.pdf /assets/cv-cz.pdf; do
+          for page in / /projects/ /models/; do
             curl --fail --silent --show-error --max-time 10 "http://127.0.0.1:18080${page}" >/dev/null
+          done
+          for language in en cz; do
+            headers=$(curl --silent --show-error --max-time 10 --dump-header - --output /dev/null "http://127.0.0.1:18080/assets/cv-${language}.pdf")
+            printf '%s' "$headers" | grep -q 'HTTP/1.1 302'
+            printf '%s' "$headers" | grep -qi "Location: https://github.com/pjunak/cv/releases/latest/download/cv-${language}.pdf"
           done
           code=$(curl --silent --show-error --max-time 10 --output /dev/null --write-out '%{http_code}' http://127.0.0.1:18080/missing-ci-page)
           [[ "$code" == 404 ]]

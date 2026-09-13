@@ -134,7 +134,7 @@
       'footer.copy_short': '© 2026 Petr Junák',
 
       /* CV download */
-      'cv.pdf_path': 'assets/cv-en.pdf',
+      'cv.pdf_path': 'https://github.com/pjunak/cv/releases/latest/download/cv-en.pdf',
       'cv.tooltip':  'Download CV',
 
       /* Command palette */
@@ -301,7 +301,7 @@
       'footer.copy_short': '© 2026 Petr Junák',
 
       /* CV download */
-      'cv.pdf_path': 'assets/cv-cz.pdf',
+      'cv.pdf_path': 'https://github.com/pjunak/cv/releases/latest/download/cv-cz.pdf',
       'cv.tooltip':  'Stáhnout životopis',
 
       /* Command palette */

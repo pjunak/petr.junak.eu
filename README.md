@@ -14,7 +14,7 @@ Personal CV webpage
 - `js/subpage.js` — Shared filter chip logic
 - `js/projects.js`, `js/models.js` — Per-page card rendering
 - `js/palette.js` — Command palette (press <kbd>Ctrl/Cmd</kbd>+<kbd>K</kbd>)
-- `assets/` — Photos, icon sprite, fonts, PWA icons, CV PDFs
+- `assets/` — Photos, icon sprite, fonts, PWA icons
 - `scripts/` — CI helper that refreshes Printables stats weekly
 - `robots.txt`, `sitemap.xml` — Search engine hints
 
@@ -22,16 +22,18 @@ Personal CV webpage
 
 The downloadable CVs are **built from LaTeX in [pjunak/cv](https://github.com/pjunak/cv)**.
 Every push there compiles both languages and publishes them to that repo's `latest` release;
-this site's CI downloads them at image-build time, so the website always serves the current CV.
+the site's download buttons link directly to those generated PDFs. A CV edit needs
+no website rebuild, extra deployment token or manual PDF upload. Existing
+`/assets/cv-en.pdf` and `/assets/cv-cz.pdf` bookmarks redirect to the same files.
 
 ## Verification and deployment
 
 Pull requests check every JavaScript file, build the nginx image, validate its
-configuration, and verify the home/projects/models pages, both CV downloads,
+configuration, and verify the home/projects/models pages, both stable CV redirects,
 and the 404 response. Main-branch builds publish the same verified BuildKit
 result and dispatch its immutable digest to the infrastructure repository.
-Manual and weekly builds use the same gates. The digest also identifies builds
-that use newer CV PDFs without a change to this repository's source revision.
+Manual and weekly builds use the same gates. Weekly builds publish refreshed
+Printables statistics; PDF updates are independent of website builds.
 
 Container checks require Docker; source syntax checks alone do not establish
 nginx or container behavior. Browser interaction and visual checks remain
@@ -43,7 +45,7 @@ separate from this smoke suite.
 
 ## Deployment results and retries
 
-Current main changes and CV refreshes publish the verified image, then wait for
+Current main changes and weekly statistics builds publish the verified image, then wait for
 the infrastructure rollout to finish. Production runs are queued; superseded
 sources skip publication. Pull requests verify without publishing or deploying.
 
@@ -54,6 +56,6 @@ credential is stored here.
 
 **Deploy published release** accepts a completed build run ID. It verifies that
 run's retained `published-image` artifact and successful publication job before
-deploying the same digest without rebuilding or refetching the CV PDFs. Both
+deploying the same digest without rebuilding. Both
 workflows report success only after the corresponding infrastructure deployment
 succeeds. See the [shared contract](https://github.com/pjunak/infra/blob/main/docs/application-deployments.md).

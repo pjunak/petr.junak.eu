@@ -117,9 +117,9 @@ scripts/update-model-stats.mjs
 
 ## Deployment
 
-- CI downloads current `cv-en.pdf` and `cv-cz.pdf` from the sibling `cv`
-  repository's rolling release before building; committed PDFs are local
-  fallbacks.
+- CV download links point directly to the sibling `cv` repository's rolling
+  release, built automatically from LaTeX. Exact nginx redirects preserve the
+  old `/assets/cv-{en,cz}.pdf` links; no PDFs are bundled in this image.
 - The workflow publishes `latest` and `sha-<commit>` images to GHCR, then
   dispatches the immutable image digest to the sibling `infra`
   infrastructure repository after nginx and HTTP smoke checks pass.

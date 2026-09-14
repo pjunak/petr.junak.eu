@@ -58,4 +58,7 @@ credential is stored here.
 run's retained `published-image` artifact and successful publication job before
 deploying the same digest without rebuilding. Both
 workflows report success only after the corresponding infrastructure deployment
-succeeds. See the [shared contract](https://github.com/pjunak/infra/blob/main/docs/application-deployments.md).
+succeeds. Dispatch uses infra's main-only workflow with `service=petr`, full
+source `sha`, immutable `image_ref` and unique `request_id`, then verifies the
+exact returned run ID. Inspect infra Actions before retrying an ambiguous
+request. See the [shared contract](https://github.com/pjunak/infra/blob/main/docs/application-deployments.md).

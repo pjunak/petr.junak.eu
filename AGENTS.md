@@ -122,7 +122,12 @@ scripts/update-model-stats.mjs
   old `/assets/cv-{en,cz}.pdf` links; no PDFs are bundled in this image.
 - The workflow publishes `latest` and `sha-<commit>` images to GHCR, then
   dispatches the immutable image digest to the sibling `infra`
-  infrastructure repository after nginx and HTTP smoke checks pass.
+  infrastructure repository after nginx and HTTP smoke checks pass. It
+  targets `petr` through main-only `workflow_dispatch` and waits for that exact
+  run's health-checked result. The pinned shared infra client and **Deploy
+  published release** reuse verified publication metadata for retries. See
+  [deployment results](README.md#deployment-results-and-retries); `INFRA_SERVICE`
+  is unused here.
 - This repository never SSHes to production.
 - Preserve nginx's gzip, cache, `nosniff`, and custom-404 behavior.
 - Changes to `Dockerfile`, `nginx-site.conf`, or deployment workflows require

@@ -121,7 +121,7 @@ scripts/update-model-stats.mjs
   release, built automatically from LaTeX. Exact nginx redirects preserve the
   old `/assets/cv-{en,cz}.pdf` links; no PDFs are bundled in this image.
 - The workflow publishes `latest` and `sha-<commit>` images to GHCR, then
-  dispatches the immutable image digest to the sibling `infra`
+  dispatches the immutable image digest to the separate `pjunak/infra`
   infrastructure repository after nginx and HTTP smoke checks pass. It
   targets `petr` through main-only `workflow_dispatch` and waits for that exact
   run's health-checked result. The pinned shared infra client and **Deploy

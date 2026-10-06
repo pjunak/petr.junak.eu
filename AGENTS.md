@@ -120,15 +120,10 @@ scripts/update-model-stats.mjs
 - CV download links point directly to the sibling `cv` repository's rolling
   release, built automatically from LaTeX. Exact nginx redirects preserve the
   old `/assets/cv-{en,cz}.pdf` links; no PDFs are bundled in this image.
-- The workflow publishes `latest` and `sha-<commit>` images to GHCR, then
-  dispatches the immutable image digest to the separate `pjunak/infra`
-  infrastructure repository after nginx and HTTP smoke checks pass. It
-  targets `petr` through main-only `workflow_dispatch` and waits for that exact
-  run's health-checked result. The pinned shared infra client and **Deploy
-  published release** reuse verified publication metadata for retries. See
-  [deployment results](README.md#deployment-results-and-retries); `INFRA_SERVICE`
-  is unused here.
-- This repository never SSHes to production.
+- After nginx and HTTP smoke checks pass, the workflow publishes the image to
+  GHCR and `pjunak/infra` deploys it as target `petr`; the workflow waits for
+  that result. See [deployment results](README.md#deployment-results-and-retries)
+  for retries.
 - Preserve nginx's gzip, cache, `nosniff`, and custom-404 behavior.
 - Changes to `Dockerfile`, `nginx-site.conf`, or deployment workflows require
   a container build and explicit review of their production effect.
@@ -138,10 +133,8 @@ scripts/update-model-stats.mjs
 
 ## Completion
 
-For prose or agent-guidance-only changes, review the diff, check local links,
-and verify changed commands or contract claims. Runtime builds and operational
-acceptance are required only for the affected behavior below. Reuse successful
-checks on unchanged inputs; preserve complete CI and release gates.
+Documentation-only changes need a diff review, link check and verification of
+changed claims.
 
 For a page-local change, inspect that page and its changed interactions in both
 languages and relevant layouts. Use the full matrix below for shared styling,
@@ -159,5 +152,5 @@ i18n, navigation, caching, asset delivery or release changes:
   change.
 
 Do not commit secrets, local editor/agent state, or generated runtime files.
-The global Codex instructions govern task commits. Never push, deploy, publish,
-or alter workflow permissions unless explicitly requested.
+Commit locally after validation. Never push, deploy, publish, or alter workflow
+permissions without explicit approval.

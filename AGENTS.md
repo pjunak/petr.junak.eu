@@ -121,9 +121,8 @@ scripts/update-model-stats.mjs
   release, built automatically from LaTeX. Exact nginx redirects preserve the
   old `/assets/cv-{en,cz}.pdf` links; no PDFs are bundled in this image.
 - After nginx and HTTP smoke checks pass, the workflow publishes the image to
-  GHCR and `pjunak/infra` deploys it as target `petr`; the workflow waits for
-  that result. See [deployment results](README.md#deployment-results-and-retries)
-  for retries.
+  GHCR and hands its digest to `pjunak/infra`, which deploys it as target
+  `petr`. See [deployment results](README.md#deployment-results-and-retries).
 - Preserve nginx's gzip, cache, `nosniff`, and custom-404 behavior.
 - Changes to `Dockerfile`, `nginx-site.conf`, or deployment workflows require
   a container build and explicit review of their production effect.

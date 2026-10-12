@@ -31,7 +31,7 @@ no website rebuild, extra deployment token or manual PDF upload. Existing
 Pull requests check every JavaScript file, build the nginx image, validate its
 configuration, and verify the home/projects/models pages, both stable CV redirects,
 and the 404 response. Main-branch builds publish the same verified BuildKit
-result and dispatch its immutable digest to the infrastructure repository.
+result and hand its immutable digest to the infrastructure repository.
 Manual and weekly builds use the same gates. Weekly builds publish refreshed
 Printables statistics; PDF updates are independent of website builds.
 
@@ -45,20 +45,14 @@ separate from this smoke suite.
 
 ## Deployment results and retries
 
-Current main changes and weekly statistics builds publish the verified image, then wait for
-the infrastructure rollout to finish. Production runs are queued; superseded
-sources skip publication. Pull requests verify without publishing or deploying.
+Main changes and weekly statistics builds publish the verified image, then
+start infra's **Deploy** workflow with `service=petr` and the image digest. This
+run is green once the image is handed over; the deployment result is the Deploy
+run in [pjunak/infra](https://github.com/pjunak/infra/actions/workflows/deploy.yml).
+Production runs are queued and superseded sources skip publication. Pull
+requests verify without publishing or deploying.
 
-Set `INFRA_REPO=pjunak/infra` and `INFRA_DISPATCH_TOKEN` with Contents read
-and Actions write on infra. The workflow targets `petr` directly; `INFRA_SERVICE`
-is obsolete. It uses the pinned shared infrastructure client, and no server SSH
-credential is stored here.
-
-**Deploy published release** accepts a completed build run ID. It verifies that
-run's retained `published-image` artifact and successful publication job before
-deploying the same digest without rebuilding. Both
-workflows report success only after the corresponding infrastructure deployment
-succeeds. Dispatch uses infra's main-only workflow with `service=petr`, full
-source `sha`, immutable `image_ref` and unique `request_id`, then verifies the
-exact returned run ID. Inspect infra Actions before retrying an ambiguous
-request. See the [shared contract](https://github.com/pjunak/infra/blob/main/docs/application-deployments.md).
+Requires the `INFRA_REPO=pjunak/infra` variable and the `INFRA_DISPATCH_TOKEN`
+secret (Actions write on infra). No server credential is stored here. To retry
+or roll back, run infra's Deploy manually with the digest; see infra's
+[application deployments](https://github.com/pjunak/infra/blob/main/docs/application-deployments.md).

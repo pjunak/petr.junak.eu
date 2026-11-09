@@ -41,7 +41,7 @@ const MODELS = [
     image: 'https://media.printables.com/media/prints/1223982/images/9176811_9e8dfdbd-dfd0-4815-8b57-00d272dbf257_2eb2d348-6cef-4ab3-8e23-7e6637440f23/thumbs/inside/640x480/png/screenshot-2025-03-10-044823.webp',
     category: 'ratrig',
     tagKey: 'ratrig',
-    stats: { downloads: 14, likes: 4, collections: 1 },
+    stats: { downloads: 15, likes: 4, collections: 1 },
   },
   {
     title: 'Bear Upgrade LED Light Bar (10mm Z rods)',

@@ -29,7 +29,7 @@ const MODELS = [
     image: 'https://media.printables.com/media/prints/cfaeb3a2-2dcf-4a47-8d62-86895e490e71/images/10777640_05ce3206-0576-4859-8f00-6825fc5063b2_de3305c4-a84b-4db5-97e2-dfdec202502c/thumbs/inside/640x480/png/screenshot-2025-09-29-165046.webp',
     category: 'ratrig',
     tagKey: 'ratrig',
-    stats: { downloads: 30, likes: 4, collections: 4 },
+    stats: { downloads: 31, likes: 4, collections: 4 },
   },
   {
     title: 'Manta M8P 2.0 Mounting Bracket',
@@ -53,7 +53,7 @@ const MODELS = [
     image: 'https://media.printables.com/media/prints/552422/images/4435428_e8af6fb9-8c2d-4a68-948f-6de602dd65c8/thumbs/inside/640x480/jpg/pxl_20230813_215412532.webp',
     category: 'prusa',
     tagKey: 'prusa',
-    stats: { downloads: 32, likes: 8, collections: 5 },
+    stats: { downloads: 32, likes: 8, collections: 4 },
   },
 ];
 
